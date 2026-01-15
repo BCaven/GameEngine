@@ -16,10 +16,41 @@ Shape::Shape(const size_t triangleCount, const std::vector<float>& data)
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-	int offset = 0; // TODO: compute the offset :)
+	int offset = triangleCount * 3 * ( 3 * sizeof(float)); // Offset: number of vertices = num triangles * 3 * 3
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
+	// TODO: check for opengl errors when creating shape
+
+	// push the data into the pos and norm vectors (pos first, then normals)
+	for (int i = 0; i < triangleCount * 3; i+=1)
+	{
+		int current = i * 3;
+		float x = data[current];
+		float y = data[current + 1];
+		float z = data[current + 2];
+		pos.push_back(glm::vec3(x, y, z));
+	}
+	for (int i = 0; i < triangleCount * 3; i += 1)
+	{
+		// offset: three points per triangle, three floats per point = 9 * num triangles
+		int current = (i * 3) + (triangleCount * 9);
+		float x = data[current];
+		float y = data[current + 1];
+		float z = data[current + 2];
+		norm.push_back(glm::vec3(x, y, z));
+	}
+}
+Shape::~Shape()
+{
+	glDeleteVertexArrays(1, &vao);
+	glDeleteBuffers(1, &vbo);
+	vao = 0;
+	vbo = 0;
+
+	// TODO: check for opengl errors
+	// TODO: maybe make a macro for checking for opengl errors :)
 }
 
 Shape Shape::fromFile(std::string fileName)
@@ -36,7 +67,7 @@ Shape Shape::fromFile(std::string fileName)
 		int triCount = std::stoi(line);
 		while (std::getline(input, line, ' '))
 		{
-			int x = std::stoi(line);
+			float x = std::stof(line);
 			floatData.push_back(x);
 		}
 
@@ -44,6 +75,11 @@ Shape Shape::fromFile(std::string fileName)
 	}
 	else
 	{
-		
+		auto logger = spdlog::get("shape");
+		if (!logger)
+		{
+			logger = spdlog::stdout_color_mt("shape");
+		}
+		logger->error("Failed to open file: {}", fileName);
 	}
 }
