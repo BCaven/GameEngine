@@ -53,7 +53,7 @@ Shape::~Shape()
 	// TODO: maybe make a macro for checking for opengl errors :)
 }
 
-Shape Shape::fromFile(std::string fileName)
+std::shared_ptr<Shape> Shape::fromFile(std::string fileName)
 {
 	std::fstream input(fileName);
 	std::vector<float> floatData;
@@ -72,6 +72,7 @@ Shape Shape::fromFile(std::string fileName)
 		}
 
 		std::shared_ptr<Shape> constructedShape(new Shape(triCount, floatData));
+		return constructedShape;
 	}
 	else
 	{
@@ -82,4 +83,5 @@ Shape Shape::fromFile(std::string fileName)
 		}
 		logger->error("Failed to open file: {}", fileName);
 	}
+	return nullptr;
 }

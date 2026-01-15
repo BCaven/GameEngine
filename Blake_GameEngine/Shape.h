@@ -18,7 +18,7 @@ private:
 	std::shared_ptr<spdlog::logger> logger;
 
 public:
-	static Shape fromFile(std::string fileName);
+	static std::shared_ptr<Shape> fromFile(std::string fileName);
 
 	Shape(const size_t triangleCount, const std::vector<float>& data);
 	~Shape();
