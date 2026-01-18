@@ -6,6 +6,7 @@ void SDL_Manager::closeWindow(std::uint32_t windowId)
 	{
 		if (windowId == SDL_GetWindowID(windows[0]))
 		{
+			// TODO: make sure the opengl objects get destroyed before the context gets destroyed
 			SDL_GL_DestroyContext(opengl_context);
 			// TODO: make a quit macro
 			for (auto window : windows)

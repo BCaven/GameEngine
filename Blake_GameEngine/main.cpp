@@ -1,7 +1,9 @@
 #include "SDL_Manager.h"
+#include "Shape.h"
 
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
+
 
 
 int main(int argc, char** argv) 
@@ -14,6 +16,18 @@ int main(int argc, char** argv)
 
 	sdl.spawnWindow("Test Window 1", 500, 500, false);
 	sdl.spawnWindow("Test Window 2", 500, 500, false);
+
+	// test building shapes:
+	logger->info("Creating shape from static data");
+	Shape StaticShape(1, { 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0 });
+	logger->info("Creating shape from file");
+	auto ShapeFromFile = Shape::fromFile("suzanne.bcf");
+
+	if (!ShapeFromFile)
+	{
+		logger->warn("Failed to read shape from file!");
+	}
+
 
 	SDL_Event e;
 	bool quit = false;
@@ -36,12 +50,9 @@ int main(int argc, char** argv)
 			}
 		}
 
-		GLenum err;
-		while ((err = glGetError()) != GL_NO_ERROR)
+		if (debugging::checkOpenGLErrors())
 		{
-			logger->error("OpenGL errors!");
 			quit = true;
-			break;
 		}
 
 		sdl.updateWindows();

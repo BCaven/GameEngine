@@ -21,7 +21,10 @@ Shape::Shape(const size_t triangleCount, const std::vector<float>& data)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	// TODO: check for opengl errors when creating shape
+	if (debugging::checkOpenGLErrors())
+	{
+		logger->warn("OpenGL errors when creating the shape!");
+	}
 
 	// push the data into the pos and norm vectors (pos first, then normals)
 	for (int i = 0; i < triangleCount * 3; i+=1)
@@ -48,9 +51,10 @@ Shape::~Shape()
 	glDeleteBuffers(1, &vbo);
 	vao = 0;
 	vbo = 0;
-
-	// TODO: check for opengl errors
-	// TODO: maybe make a macro for checking for opengl errors :)
+	if (debugging::checkOpenGLErrors())
+	{
+		logger->warn("OpenGL errors when deleting shape");
+	}
 }
 
 std::shared_ptr<Shape> Shape::fromFile(std::string fileName)

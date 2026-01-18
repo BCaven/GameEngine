@@ -16,10 +16,11 @@ def write_bcf_data(filepath):
     bm.free()
     
     print(f"Found {triCount} triangles")
-    str_vertices = [f"{v[0]} {v[1]} {v[2]}" for v in me.vertices]
+    str_vertices = [f"{v.co[0]} {v.co[1]} {v.co[2]}" for v in me.vertices]
+    print(f"Num vertices: {len(me.vertices)}")
     str_normals = [f"{n.normal[0]} {n.normal[1]} {n.normal[2]}" for n in me.vertices]
     f = open(filepath, "w", encoding='utf-8')
-    f.write(f"{triCount }")
+    f.write(f"{triCount} ")
     f.write(f"{' '.join(str_vertices)} {' '.join(str_normals)}")
     f.close()
 

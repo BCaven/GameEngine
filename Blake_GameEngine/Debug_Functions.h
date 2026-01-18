@@ -4,7 +4,7 @@
 
 namespace debugging
 {
-	bool checkOpenGLErrors()
+	inline bool checkOpenGLErrors()
 	{
 		GLenum err;
 		while ((err = glGetError()) != GL_NO_ERROR)

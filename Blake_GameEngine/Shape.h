@@ -8,6 +8,8 @@
 #include <string>
 #include <fstream>
 
+#include "Debug_Functions.h"
+
 class Shape
 {
 private:
