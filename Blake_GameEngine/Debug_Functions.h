@@ -15,3 +15,23 @@ namespace debugging
 		return false;
 	}
 }
+namespace helper
+{
+	inline bool loadFile(std::string fileName, std::string& outContent)
+	{
+		std::ifstream fileStream(fileName, std::ios::in);
+		if (!fileStream.is_open())
+		{
+			spdlog::error("Failed to open file: {}", fileName);
+			return false;
+		}
+		std::string line = "";
+		outContent = "";
+		while (std::getline(fileStream, line))
+		{
+			outContent += line + "\n";
+		}
+		fileStream.close();
+		return true;
+	}
+}
