@@ -99,7 +99,6 @@ void SDL_Manager::updateWindows()
 {
 	if (windows[0])
 	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		SDL_GL_SwapWindow(windows[0]);
 	}
 	for (int i = 1; i < count; i++)

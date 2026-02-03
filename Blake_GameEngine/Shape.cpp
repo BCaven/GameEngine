@@ -16,8 +16,8 @@ Shape::Shape(const size_t triangleCount, const std::vector<float>& data)
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-	int offset = triangleCount * 3 * ( 3 * sizeof(float)); // Offset: number of vertices = num triangles * 3 * 3
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
+	size_t offset = triangleCount * 3 * ( 3 * sizeof(float)); // Offset: number of vertices = num triangles * 3 * 3
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*) offset);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
@@ -35,10 +35,10 @@ Shape::Shape(const size_t triangleCount, const std::vector<float>& data)
 		float z = data[current + 2];
 		pos.push_back(glm::vec3(x, y, z));
 	}
-	for (int i = 0; i < triangleCount * 3; i += 1)
+	for (size_t i = 0; i < triangleCount * 3; i += 1)
 	{
 		// offset: three points per triangle, three floats per point = 9 * num triangles
-		int current = (i * 3) + (triangleCount * 9);
+		size_t current = (i * 3) + (triangleCount * 9);
 		float x = data[current];
 		float y = data[current + 1];
 		float z = data[current + 2];

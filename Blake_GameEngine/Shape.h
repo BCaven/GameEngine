@@ -24,7 +24,13 @@ public:
 
 	Shape(const size_t triangleCount, const std::vector<float>& data);
 	~Shape();
-	GLuint getVAO();
-	GLsizei getVertexCount();
+	inline GLuint getVAO() 
+	{
+		return vao;
+	};
+	inline GLsizei getVertexCount()
+	{
+		return pos.size();
+	}
 };
 

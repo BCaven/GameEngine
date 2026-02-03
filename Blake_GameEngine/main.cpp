@@ -1,8 +1,11 @@
 #include "SDL_Manager.h"
 #include "Shape.h"
-
+#include <glm/glm.hpp>
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
+#include <cmath>
 
 GLuint vert;
 GLuint frag;
@@ -16,10 +19,10 @@ void loadShaders(std::string shaderName)
 	std::string vertShader = "";
 	if (!helper::loadFile(vertShaderFile, vertShader))
 	{
-		spdlog::error("Failed to load vertex shader file: {}", vertShaderFile);
+		spdlog::error("Failed to load vertex shader file: \n{}", vertShaderFile);
 		return;
 	}
-	spdlog::info("Loaded vertex shader: {}", vertShader);
+	spdlog::info("Loaded vertex shader: \n{}", vertShader);
 	const char* vertShaderChar = vertShader.c_str();
 	glShaderSource(vert, 1, &vertShaderChar, NULL);
 	glCompileShader(vert);
@@ -39,10 +42,10 @@ void loadShaders(std::string shaderName)
 	std::string fragShader = "";
 	if (!helper::loadFile(fragShaderFile, fragShader))
 	{
-		spdlog::error("Failed to load fragment shader file: {}", fragShaderFile);
+		spdlog::error("Failed to load fragment shader file: \n{}", fragShaderFile);
 		return;
 	}
-	spdlog::info("Loaded fragment shader: {}", fragShader);
+	spdlog::info("Loaded fragment shader: \n{}", fragShader);
 	const char* fragShaderChar = fragShader.c_str();
 	glShaderSource(frag, 1, &fragShaderChar, NULL);
 	glCompileShader(frag);
@@ -100,6 +103,7 @@ int main(int argc, char** argv)
 
 	SDL_Event e;
 	bool quit = false;
+	double frame_num = 0;
 	while (!quit)
 	{
 		while (SDL_PollEvent(&e) != 0)
@@ -119,12 +123,28 @@ int main(int argc, char** argv)
 			}
 		}
 
+		// display mesh
+		glClearColor(std::sin(frame_num), 0.0f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glBindVertexArray(ShapeFromFile->getVAO());
+		glUseProgram(program);
+		// ""camera""
+		glm::mat4 proj = glm::perspective(1.309f, 16.0f / 9.0f, 0.1f, 1000.0f);
+
+		glUniformMatrix4fv(uniformIndex, 1, GL_FALSE, glm::value_ptr(proj));
+		if (frame_num == 0)
+			logger->info("Drawing shape with {} vertices", ShapeFromFile->getVertexCount());
+		glDrawArrays(GL_TRIANGLES, 0, ShapeFromFile->getVertexCount());
+		glBindVertexArray(0);
+		glUseProgram(0);
+
 		if (debugging::checkOpenGLErrors())
 		{
 			quit = true;
 		}
 
 		sdl.updateWindows();
+		frame_num += 0.001;
 	}
 	return 0;
 }
