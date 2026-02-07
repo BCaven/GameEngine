@@ -85,21 +85,27 @@ int main(int argc, char** argv)
 	SDL_Manager& sdl = SDL_Manager::sdl();
 
 	sdl.spawnWindow("Test Window 1", 500, 500, false);
-	sdl.spawnWindow("Test Window 2", 500, 500, false);
+	//sdl.spawnWindow("Test Window 2", 500, 500, false);
 
 	loadShaders("simple");
 
 	// test building shapes:
 	logger->info("Creating shape from static data");
-	Shape StaticShape(1, { 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0 });
-	logger->info("Creating shape from file");
-	auto ShapeFromFile = Shape::fromFile("suzanne.bcf");
+	Shape StaticShape(1, { 
+		0.0, 0.0, 0.0, 
+		0.5, 1.0, 0.0, 
+		1.0, 0.0, 0.0, 
+		0.0, 0.0, 1.0, 
+		0.0, 0.0, 1.0, 
+		0.0, 0.0, 1.0 });
+	//logger->info("Creating shape from file");
+	auto ShapeFromFile = Shape::fromFile("cube.bcf");
 
 	if (!ShapeFromFile)
 	{
-		logger->warn("Failed to read shape from file!");
+		logger->warn("Failed to read shape from file");
+		return -1;
 	}
-
 
 	SDL_Event e;
 	bool quit = false;
@@ -124,17 +130,29 @@ int main(int argc, char** argv)
 		}
 
 		// display mesh
-		glClearColor(std::sin(frame_num), 0.0f, 1.0f, 1.0f);
+		glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glBindVertexArray(ShapeFromFile->getVAO());
+		glBindVertexArray(StaticShape.getVAO());
 		glUseProgram(program);
 		// ""camera""
-		glm::mat4 proj = glm::perspective(1.309f, 16.0f / 9.0f, 0.1f, 1000.0f);
-
-		glUniformMatrix4fv(uniformIndex, 1, GL_FALSE, glm::value_ptr(proj));
+		glm::mat4 projection_matrix = glm::perspective(1.5f, 20.0f / 9.0f, 0.1f, 1000.0f);
+		glm::vec3 camera_position(std::sin(frame_num), 0.5, std::cos(frame_num));
+		glm::vec3 camera_direction(0, 0, 1.0f);
+		glm::vec3 camera_up(0, 1.0f, 0);
+		glm::mat4 view_matrix = glm::lookAt(camera_position, camera_position + camera_direction, camera_up);
+		
+		glm::vec3 scaling(1.0f, 1.0f, 1.0f);
+		glm::vec3 translation(-0.5f, 0, -0.1f);
+		glm::vec3 rotation_axis(1.0f, 0, 0);
+		float rotation_angle = 0;
+		glm::mat4 model_matrix = glm::translate(glm::rotate(glm::scale(
+			glm::mat4(1.0f), scaling), rotation_angle, rotation_axis), translation);
+		glm::mat4 model_view_projection = projection_matrix * view_matrix * model_matrix;
+		glUniformMatrix4fv(uniformIndex, 1, GL_FALSE, glm::value_ptr(model_view_projection));
+		
 		if (frame_num == 0)
-			logger->info("Drawing shape with {} vertices", ShapeFromFile->getVertexCount());
-		glDrawArrays(GL_TRIANGLES, 0, ShapeFromFile->getVertexCount());
+			logger->info("Drawing shape with {} vertices", StaticShape.getVertexCount());
+		glDrawArrays(GL_TRIANGLES, 0, StaticShape.getVertexCount());
 		glBindVertexArray(0);
 		glUseProgram(0);
 

@@ -14,7 +14,7 @@ class GameObject
 
 public:
 	GameObject()
-		: bCanTick(true), bDynamic(false), bVisible(true), transform(
+		: bCanTick(false), bDynamic(false), bVisible(true), transform(
 			0.0f, 0.0f, 0.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 0.0f,

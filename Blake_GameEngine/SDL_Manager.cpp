@@ -99,6 +99,7 @@ void SDL_Manager::updateWindows()
 {
 	if (windows[0])
 	{
+		glFlush();
 		SDL_GL_SwapWindow(windows[0]);
 	}
 	for (int i = 1; i < count; i++)

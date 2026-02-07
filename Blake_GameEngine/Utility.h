@@ -3,8 +3,9 @@
 
 class Utility
 {
-	static int getDeltaTimeMillis();
+public:
+	static int getDeltaTimeMillis() { return -1; }
 
-	static double getDeltaTimeSeconds();
+	static double getDeltaTimeSeconds() { return -1; }
 };
 

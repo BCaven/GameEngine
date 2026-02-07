@@ -10,6 +10,7 @@ namespace debugging
 		while ((err = glGetError()) != GL_NO_ERROR)
 		{
 			spdlog::error("OpenGL errors!");
+			spdlog::error("Error code: {}", err);
 			return true;
 		}
 		return false;

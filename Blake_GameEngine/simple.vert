@@ -6,5 +6,7 @@ smooth out vec3 normal;
 void main()
 {
 	normal = norm;
-	gl_Position = vec4(pos.xyz + vec3(0.0, 0.0, 1.0), 1.0); //The addition is an offset as we are not using a camera matrix yet..
+
+	// TODO: Camera matrix
+	gl_Position = proj * vec4(pos.xyz, 1.0);
 }
