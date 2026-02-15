@@ -25,9 +25,12 @@ def write_bcf_data(filepath):
             v = me.vertices[vert_index]
             str_vertices.append(f"{v.co[0]} {v.co[1]} {v.co[2]}")
             str_normals.append(f"{v.normal[0]} {v.normal[1]} {v.normal[2]}")
+            
+    #str_vertices = [f"{v.co[0]} {v.co[1]} {v.co[2]}" for v in me.vertices]
+    #str_normals = [f"{v.normal[0]} {v.normal[1]} {v.normal[2]}" for v in me.vertices]
     print(f"Num vertices: {len(str_vertices)}")
     f = open(filepath, "w", encoding='utf-8')
-    f.write(f"{triCount} ")
+    f.write(f"{len(str_vertices)} ")
     f.write(f"{' '.join(str_vertices)} {' '.join(str_normals)}")
     f.close()
 

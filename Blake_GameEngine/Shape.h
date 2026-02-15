@@ -22,7 +22,7 @@ private:
 public:
 	static std::shared_ptr<Shape> fromFile(std::string fileName);
 
-	Shape(const size_t triangleCount, const std::vector<float>& data);
+	Shape(const size_t vertCount, const std::vector<float>& data);
 	~Shape();
 	inline GLuint getVAO() 
 	{

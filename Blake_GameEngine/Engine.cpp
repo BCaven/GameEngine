@@ -1,5 +1,13 @@
 #include "Engine.h"
 
+Engine::Engine()
+{
+	logger = spdlog::get("engine");
+	if (!logger)
+	{
+		logger = spdlog::stdout_color_mt("engine");
+	}
+}
 
 void Engine::initialize()
 {
@@ -15,25 +23,23 @@ void Engine::initialize()
 			TickableGameObjects.push_back(obj);
 		}
 	}
-
-
-
 	// start main game loop thread
 	mainGameLoopThread = std::thread(&Engine::MainGameLoop, this);
 }
 
 void Engine::MainGameLoop()
 {
-	const float MillisToSeconds = 1 / 1000.0f;
+	const double MillisToSeconds = 1 / 1000.0;
 	while (bRunning)
 	{
-		int deltaTimeMillis = Utility::getDeltaTimeMillis();
-		float deltaMillis = deltaTimeMillis - PrevFrameTimeMillis;
+		Uint64 deltaTimeMillis = Utility::getTimeMillis();
+		Uint64 deltaMillis = deltaTimeMillis - PrevFrameTimeMillis;
 		PrevFrameTimeMillis = deltaTimeMillis;
+		double deltaSeconds = deltaMillis * MillisToSeconds;
 
 		for (auto obj : TickableGameObjects)
 		{
-			obj->Tick(deltaMillis * MillisToSeconds); // Convert to seconds
+			obj->Tick(deltaSeconds); // Convert to seconds
 		}
 
 		// TODO: whatever else needs to happen each frame
@@ -42,6 +48,15 @@ void Engine::MainGameLoop()
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 	
+}
+
+void Engine::RegisterGameObject(GameObject* obj)
+{
+	GameObjects.push_back(obj);
+	if (obj->CanTick())
+	{
+		TickableGameObjects.push_back(obj);
+	}
 }
 
 void Engine::Shutdown()

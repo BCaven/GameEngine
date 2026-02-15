@@ -1,11 +1,15 @@
 #pragma once
 #include <chrono>
+#include <SDL3/SDL_timer.h>
 
 class Utility
 {
+private:
+	inline static Uint64 StartTimeMillis = SDL_GetTicks();
 public:
-	static int getDeltaTimeMillis() { return -1; }
+	static Uint64 getTimeMillis();
 
-	static double getDeltaTimeSeconds() { return -1; }
+	static double getTimeSeconds();
+
 };
 
