@@ -21,6 +21,7 @@ void SDL_Manager::closeWindow(std::uint32_t windowId)
 		{
 			SDL_DestroyWindow(windows[i]);
 			windows[i] = windows[count - 1];
+			windows[count - 1] = NULL;
 			count--;
 			return;
 		}

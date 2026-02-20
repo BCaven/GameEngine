@@ -18,20 +18,25 @@ class RenderEngine
 	GLuint vert;
 	GLuint frag;
 	GLuint program;
-	GLint uniformIndex;
+	GLint uniformIndexMPV;
+	GLint uniformIndexLightDir;
+
+
 
 	std::shared_ptr<spdlog::logger> logger;
 
-	// later we will need a scene graph, but for now going to pretend liek there is an array of
+	// later we will need a scene graph, but for now going to pretend like there is an array of
 	// shapes that need to be rendered.
 	std::vector<std::shared_ptr<Shape>> RenderQueue;
 
 	void loadShaders(std::string shaderName);
 
-	public:
+public:
+	double camDist = 5;
+
 	RenderEngine();
 	~RenderEngine();
-	void initialize();
+	void initialize(std::string shaderName);
 	void RenderFrame(double Delta);
 	void addToRenderQueue(std::shared_ptr<Shape> shape) { RenderQueue.push_back(shape); }
 };

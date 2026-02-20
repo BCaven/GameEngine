@@ -5,7 +5,8 @@ RenderEngine::RenderEngine()
 	vert = -1;
 	frag = -1;
 	program = -1;
-	uniformIndex = -1;
+	uniformIndexMPV = -1;
+	
 	logger = spdlog::get("render_engine");
 	if (!logger)
 	{
@@ -80,33 +81,33 @@ void RenderEngine::loadShaders(std::string shaderName)
 	glDeleteShader(vert);
 	glDeleteShader(frag);
 	glUseProgram(0);
-	uniformIndex = glGetUniformLocation(program, "proj");
+	uniformIndexMPV = glGetUniformLocation(program, "mpv");
+	uniformIndexLightDir = glGetUniformLocation(program, "lightDirection");
+	
 
 }
 
-void RenderEngine::initialize()
+void RenderEngine::initialize(std::string shaderName)
 {
-	loadShaders("simple");
-
-
+	loadShaders(shaderName);
+	glEnable(GL_CULL_FACE); // dont show faces not pointing towards the camera
+	//glCullFace(GL_BACK);
+	//glFrontFace(GL_CCW);     
+	glEnable(GL_DEPTH_TEST); // show faces with correct depth
 }
 
 void RenderEngine::RenderFrame(double Delta)
 {
-	// GRAPHICS: consider putting these in a rendering class.
 	glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	for (auto shape : RenderQueue) {
-		glBindVertexArray(shape->getVAO());
-	}
 	glUseProgram(program);
-
-	// TODO: create and use a camera class.
-	// ""camera""
+	
+	// TODO: actual camera
+	glm::vec3 light_direction(std::sin(Delta), 0.5, std::cos(Delta));
 	glm::mat4 projection_matrix = glm::perspective(1.5f, 20.0f / 9.0f, 0.1f, 1000.0f);
-	glm::vec3 camera_position(std::sin(Utility::getTimeSeconds() / 10) * 5, 0.5, std::cos(Utility::getTimeSeconds() / 10) * 5);
+	glm::vec3 camera_position(std::sin(Delta / 10) * (camDist), std::cos(Delta / 10) * (camDist), 0.5);
 	glm::vec3 camera_lookat(0, 0, 1.0f);
-	glm::vec3 camera_up(0, 1.0f, 0);
+	glm::vec3 camera_up(0, 0.0f, 1.0f);
 	glm::mat4 view_matrix = glm::lookAt(camera_position, camera_lookat, camera_up);
 
 	glm::vec3 scaling(1.0f, 1.0f, 1.0f);
@@ -116,9 +117,14 @@ void RenderEngine::RenderFrame(double Delta)
 	glm::mat4 model_matrix = glm::translate(glm::rotate(glm::scale(
 		glm::mat4(1.0f), scaling), rotation_angle, rotation_axis), translation);
 	glm::mat4 model_view_projection = projection_matrix * view_matrix * model_matrix;
-	glUniformMatrix4fv(uniformIndex, 1, GL_FALSE, glm::value_ptr(model_view_projection));
 
 	for (auto shape : RenderQueue) {
+		glBindVertexArray(shape->getVAO());
+	
+
+		glUniform3fv(uniformIndexLightDir, 1, glm::value_ptr(light_direction));
+		glUniformMatrix4fv(uniformIndexMPV, 1, GL_FALSE, glm::value_ptr(model_view_projection));
+	
 		glDrawArrays(GL_TRIANGLES, 0, shape->getVertexCount());
 	}
 	glBindVertexArray(0);

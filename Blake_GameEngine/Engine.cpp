@@ -23,12 +23,16 @@ void Engine::initialize()
 			TickableGameObjects.push_back(obj);
 		}
 	}
+	
+
+
 	// start main game loop thread
 	mainGameLoopThread = std::thread(&Engine::MainGameLoop, this);
 }
 
 void Engine::MainGameLoop()
 {
+	logger->info("Starting main game loop thread.");
 	const double MillisToSeconds = 1 / 1000.0;
 	while (bRunning)
 	{
@@ -39,7 +43,7 @@ void Engine::MainGameLoop()
 
 		for (auto obj : TickableGameObjects)
 		{
-			obj->Tick(deltaSeconds); // Convert to seconds
+			//obj->Tick(deltaSeconds); // Convert to seconds
 		}
 
 		// TODO: whatever else needs to happen each frame
@@ -63,4 +67,9 @@ void Engine::Shutdown()
 {
 	bRunning = false;
 	mainGameLoopThread.join();
+}
+
+Engine::~Engine()
+{
+	Shutdown();
 }

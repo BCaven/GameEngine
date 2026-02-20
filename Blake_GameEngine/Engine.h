@@ -2,6 +2,8 @@
 #include "Utility.h"
 #include <thread>
 #include "GameObject.h"
+#include "RenderEngine.h"
+
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -19,6 +21,10 @@ class Engine
 	std::vector<GameObject*> TickableGameObjects;
 	std::vector<GameObject*> GameObjects;
 
+	// I think later this is going to be its own thread
+	// that is given a camera and the scene graph and outputs
+	// a frame.
+	RenderEngine renderEngine;
 
 	std::thread mainGameLoopThread;
 

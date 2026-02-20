@@ -65,6 +65,8 @@ Shape::~Shape()
 
 std::shared_ptr<Shape> Shape::fromFile(std::string fileName)
 {
+
+	// TODO: make this multithreaded and convert it to binary
 	std::fstream input(fileName);
 	std::vector<float> floatData;
 	if (input.is_open())

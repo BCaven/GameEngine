@@ -45,5 +45,8 @@ public:
 	void spawnWindow(const std::string name, int width, int height, bool resizable);
 	void updateWindows();
 
+	// TODO: think about if we want the sdl manager to control 
+	// the opengl window or if we want the render engine to control it
+
 };
 
