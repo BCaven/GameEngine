@@ -361,5 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/Blake_GameEngine/Blake_GameEngine.vcxproj
+#/Blake_GameEngine/Blake_GameEngine.vcxproj
 /Blake_GameEngine/Blake_GameEngine.vcxproj.filters
+/Blake_GameEngine/beholder.bcf

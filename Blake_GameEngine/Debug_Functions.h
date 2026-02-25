@@ -3,6 +3,7 @@
 #include <spdlog/spdlog.h>
 #include <string>
 #include <fstream>
+#include <vector>
 
 
 namespace debugging
@@ -18,6 +19,17 @@ namespace debugging
 		}
 		return false;
 	}
+	/*
+	template <typename Callable, typename... Args, typename T>
+	inline T timeIt(double& time, Callable func, Args... args)
+	{
+		double startTime = Utility::getTimeSeconds();
+		T retVal = func(args...);
+		double endTime = Utility::getTimeSeconds();
+		time = endTime - startTime;
+		return retVal;
+	}
+	*/
 }
 namespace helper
 {
@@ -37,5 +49,15 @@ namespace helper
 		}
 		fileStream.close();
 		return true;
+	}
+	
+	inline std::vector<std::string> split(const std::string& str, char delimiter) {
+		std::vector<std::string> tokens(0);
+		std::stringstream ss(str);
+		std::string token;
+		while (std::getline(ss, token, delimiter)) {
+			tokens.push_back(token);
+		}
+		return tokens;
 	}
 }

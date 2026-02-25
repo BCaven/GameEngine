@@ -23,6 +23,7 @@ RenderEngine::~RenderEngine()
 
 void RenderEngine::loadShaders(std::string shaderName)
 {
+	// TODO: rewrite to handle tessellation shaders
 	vert = glCreateShader(GL_VERTEX_SHADER);
 	std::string vertShaderFile = shaderName + ".vert";
 	std::string vertShader = "";

@@ -32,7 +32,7 @@ int main(int argc, char** argv)
 
 	auto ShapeFromFile = Shape::fromFile("ExtrudedCode.bcf");
 	auto Suzanne = Shape::fromFile("beholder.bcf");
-	//renderEngine.addToRenderQueue(ShapeFromFile);
+	renderEngine.addToRenderQueue(ShapeFromFile);
 	renderEngine.addToRenderQueue(Suzanne);
 
 	SDL_Event e;

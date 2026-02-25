@@ -1,4 +1,6 @@
 #include "Shape.h"
+#include "Utility.h"
+#include "Debug_Functions.h"
 
 Shape::Shape(const size_t vertCount, const std::vector<float>& data)
 {
@@ -14,6 +16,7 @@ Shape::Shape(const size_t vertCount, const std::vector<float>& data)
 		logger->error("Data size does not match expected size for given vertex count!");
 		return;
 	}
+	logger->info("Building shape with {} verts in {} floats", vertCount, data.size());
 	glGenBuffers(1, &vbo);
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
@@ -65,35 +68,46 @@ Shape::~Shape()
 
 std::shared_ptr<Shape> Shape::fromFile(std::string fileName)
 {
-
-	// TODO: make this multithreaded and convert it to binary
-	std::fstream input(fileName);
+	auto logger = spdlog::get("shape-loader");
+	if (!logger)
+	{
+		logger = spdlog::stdout_color_mt("shape-loader");
+	}
+	// TODO: convert it to binary
+	logger->info("Loading shape from file: {}", fileName);
+	auto startTime = Utility::getTimeSeconds();
+	logger->info("Start time: {}", startTime);
+	std::string rawFile;
+	if (!helper::loadFile(fileName, rawFile))
+	{
+		logger->error("Failed to open {}", fileName);
+		return nullptr;
+	}
+	int vertCount = -1;
 	std::vector<float> floatData;
-	if (input.is_open())
-	{
-		// file is organized: triangle count, triangles (x, y, z), normals (x, y, z)
 
-		std::string line;
-		// get the triangle count
-		std::getline(input, line, ' ');
-		int triCount = std::stoi(line);
-		while (std::getline(input, line, ' '))
-		{
-			float x = std::stof(line);
-			floatData.push_back(x);
-		}
+	auto splitLines = helper::split(rawFile, ' ');
 
-		std::shared_ptr<Shape> constructedShape(new Shape(triCount, floatData));
-		return constructedShape;
-	}
-	else
+	for (auto line : splitLines)
 	{
-		auto logger = spdlog::get("shape");
-		if (!logger)
+		if (vertCount == -1)
 		{
-			logger = spdlog::stdout_color_mt("shape");
+			vertCount = std::stoi(line);
+			floatData.reserve(vertCount * 2 * 3);
 		}
-		logger->error("Failed to open file: {}", fileName);
+		else
+		{
+			floatData.push_back(std::stof(line));
+		}
 	}
-	return nullptr;
+	if (floatData.size() != vertCount * 2 * 3)
+	{
+		logger->error("Failed to parse {}, expected {} floats but got {}", fileName, vertCount * 2 * 3, floatData.size());
+		return nullptr;
+	}
+	logger->info("Finished reading file, time: {}", Utility::getTimeSeconds() - startTime);
+	startTime = Utility::getTimeSeconds();
+	std::shared_ptr<Shape> constructedShape(new Shape(vertCount, floatData));
+	logger->info("Finished constructing shape, time: {}", Utility::getTimeSeconds() - startTime);
+	return constructedShape;
 }
