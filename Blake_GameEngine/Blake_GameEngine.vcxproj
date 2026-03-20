@@ -130,21 +130,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BillboardObject.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="RenderEngine.cpp" />
+    <ClCompile Include="SceneGraph.cpp" />
     <ClCompile Include="SDL_Manager.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BillboardObject.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Debug_Functions.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="RenderEngine.h" />
+    <ClInclude Include="SceneGraph.h" />
     <ClInclude Include="SDL_Manager.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="Utility.h" />

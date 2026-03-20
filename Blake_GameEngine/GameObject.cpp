@@ -6,6 +6,7 @@ GameObject::GameObject()
 	bDynamic = false;
 	bVisible = true;
 	position = glm::vec3(0, 0, 0);
+	scale = glm::vec3(1, 1, 1);
 	linearV = glm::vec3(0, 0, 0);
 	angularV = glm::vec3(0, 0, 0);
 	rotation = Quaternion();
@@ -17,6 +18,11 @@ GameObject::GameObject()
 	}
 }
 
+void GameObject::Tick(float deltaTime)
+{
+	return;
+}
+
 GameObject::GameObject(std::string filePath) : GameObject()
 {
 	this->filePath = filePath;
@@ -25,4 +31,14 @@ GameObject::GameObject(std::string filePath) : GameObject()
 
 GameObject::~GameObject()
 {
+}
+
+glm::mat4 GameObject::getModel()
+{
+	//glm::mat4 model_matrix = glm::translate(glm::rotate(glm::scale(
+	//	glm::mat4(1.0f), scaling), rotation_angle, rotation_axis), translation);
+	// translation * rotation * scale
+	glm::mat4 rotationMat = glm::mat4(1);
+	glm::mat4 model = glm::translate(rotationMat * glm::scale(glm::mat4(1.0f), scale), position);
+	return model;
 }

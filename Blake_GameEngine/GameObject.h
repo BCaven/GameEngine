@@ -1,5 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include "Quaternion.h"
@@ -7,10 +9,12 @@
 
 class GameObject
 {
+protected:
 	bool bCanTick;
 	bool bDynamic;
 	bool bVisible;
 	glm::vec3 position;
+	glm::vec3 scale;
 	Quaternion rotation;
 	int renderElement;
 
@@ -30,7 +34,7 @@ public:
 	glm::mat4 getModel();
 	int getRenderElement() { return renderElement; }
 
-	//virtual void Tick(float deltaTime);
+	virtual void Tick(float deltaTime);
 	inline void SetCanTick(bool canTick) { bCanTick = canTick; }
 	inline bool CanTick() const { return bCanTick; }
 	inline void SetDynamic(bool isDynamic) { bDynamic = isDynamic; }
@@ -38,6 +42,7 @@ public:
 	inline void SetVisible(bool isVisible) { bVisible = isVisible; }
 	inline bool IsVisible() const { return bVisible; }
 	inline std::shared_ptr<Shape> getShape() { return shape; }
-
+	inline void SetPosition(glm::vec3 newPos) { position = newPos; }
+	inline glm::vec3 GetPosition() const { return position; }
 };
 

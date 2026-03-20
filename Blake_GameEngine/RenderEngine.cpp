@@ -84,47 +84,45 @@ void RenderEngine::loadShaders(std::string shaderName)
 	glUseProgram(0);
 	uniformIndexMPV = glGetUniformLocation(program, "mpv");
 	uniformIndexLightDir = glGetUniformLocation(program, "lightDirection");
-	
+	uniformIndexObjTransform = glGetUniformLocation(program, "objTransform");
 
 }
 
-void RenderEngine::initialize(std::string shaderName)
+void RenderEngine::initialize(std::string shaderName, std::shared_ptr<SceneGraph> SceneGraph_ptr)
 {
 	loadShaders(shaderName);
 	glEnable(GL_CULL_FACE); // dont show faces not pointing towards the camera
 	//glCullFace(GL_BACK);
 	//glFrontFace(GL_CCW);     
 	glEnable(GL_DEPTH_TEST); // show faces with correct depth
+
+	sceneGraph = SceneGraph_ptr;
 }
 
 void RenderEngine::RenderFrame(double Delta)
 {
+	// TODO: update the RenderQueue from the SceneGraph
+	RenderQueue = sceneGraph->GetVisibleObjects();
+
 	glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(program);
-	
 	// TODO: actual camera
 	glm::vec3 light_direction(std::sin(Delta), 0.5, std::cos(Delta));
-	glm::mat4 projection_matrix = glm::perspective(1.5f, 20.0f / 9.0f, 0.1f, 1000.0f);
-	glm::vec3 camera_position(std::sin(Delta / 10) * (camDist), std::cos(Delta / 10) * (camDist), 0.5);
-	glm::vec3 camera_lookat(0, 0, 1.0f);
-	glm::vec3 camera_up(0, 0.0f, 1.0f);
-	glm::mat4 view_matrix = glm::lookAt(camera_position, camera_lookat, camera_up);
+	
+	glm::mat4 view_projection = RenderCamera->BuildCameraMatrix();
+	
+	// TODO: make sure we can actually do this
+	glUniform3fv(uniformIndexLightDir, 1, glm::value_ptr(light_direction));
+	glUniformMatrix4fv(uniformIndexMPV, 1, GL_FALSE, glm::value_ptr(view_projection));
 
-	glm::vec3 scaling(1.0f, 1.0f, 1.0f);
-	glm::vec3 translation(-0.5f, 0, -0.1f);
-	glm::vec3 rotation_axis(1.0f, 0, 0);
-	float rotation_angle = 0;
-	glm::mat4 model_matrix = glm::translate(glm::rotate(glm::scale(
-		glm::mat4(1.0f), scaling), rotation_angle, rotation_axis), translation);
-	glm::mat4 model_view_projection = projection_matrix * view_matrix * model_matrix;
-
-	for (auto shape : RenderQueue) {
+	for (auto gameObj : RenderQueue) {
+		auto shape = gameObj->getShape();
 		glBindVertexArray(shape->getVAO());
 	
 
-		glUniform3fv(uniformIndexLightDir, 1, glm::value_ptr(light_direction));
-		glUniformMatrix4fv(uniformIndexMPV, 1, GL_FALSE, glm::value_ptr(model_view_projection));
+		glm::mat4 model_matrix = gameObj->getModel();
+		glUniformMatrix4fv(uniformIndexObjTransform, 1, GL_FALSE, glm::value_ptr(model_matrix));
 	
 		glDrawArrays(GL_TRIANGLES, 0, shape->getVertexCount());
 	}

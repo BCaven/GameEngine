@@ -14,16 +14,17 @@ void Engine::initialize()
 	// Initialization code here
 	bRunning = true;
 
+	sceneGraph = std::make_shared<SceneGraph>();
+
 	// construct our scene graph + register game objects that tick
 	// for now, just going to put them in an array
-	for (GameObject* obj : GameObjects)
+	for (auto obj : sceneGraph->GetAllObjects())
 	{
 		if (obj->CanTick())
 		{
 			TickableGameObjects.push_back(obj);
 		}
 	}
-	
 
 
 	// start main game loop thread
@@ -32,6 +33,9 @@ void Engine::initialize()
 
 void Engine::MainGameLoop()
 {
+
+	// TODO: multi-threading race conditions :)
+
 	logger->info("Starting main game loop thread.");
 	const double MillisToSeconds = 1 / 1000.0;
 	while (bRunning)
@@ -43,7 +47,7 @@ void Engine::MainGameLoop()
 
 		for (auto obj : TickableGameObjects)
 		{
-			//obj->Tick(deltaSeconds); // Convert to seconds
+			obj->Tick(deltaSeconds); // Convert to seconds
 		}
 
 		// TODO: whatever else needs to happen each frame
@@ -54,8 +58,9 @@ void Engine::MainGameLoop()
 	
 }
 
-void Engine::RegisterGameObject(GameObject* obj)
+void Engine::RegisterGameObject(std::shared_ptr<GameObject> obj)
 {
+	// TODO: make this something that gets triggered when the SceneGraph gets updated
 	GameObjects.push_back(obj);
 	if (obj->CanTick())
 	{
@@ -65,6 +70,12 @@ void Engine::RegisterGameObject(GameObject* obj)
 
 void Engine::Shutdown()
 {
+	if (!bRunning)
+	{
+		logger->info("Shutdown called but engine thread was already shutdown.");
+		return;
+	}
+	logger->info("Shutting down engine.");
 	bRunning = false;
 	mainGameLoopThread.join();
 }

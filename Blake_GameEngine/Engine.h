@@ -3,6 +3,7 @@
 #include <thread>
 #include "GameObject.h"
 #include "RenderEngine.h"
+#include "SceneGraph.h"
 
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
@@ -18,13 +19,9 @@ class Engine
 
 	bool bRunning = false;
 	Uint64 PrevFrameTimeMillis = 0;
-	std::vector<GameObject*> TickableGameObjects;
-	std::vector<GameObject*> GameObjects;
-
-	// I think later this is going to be its own thread
-	// that is given a camera and the scene graph and outputs
-	// a frame.
-	RenderEngine renderEngine;
+	std::vector <std::shared_ptr<GameObject>> TickableGameObjects;
+	std::vector<std::shared_ptr<GameObject>> GameObjects;
+	std::shared_ptr<SceneGraph> sceneGraph;
 
 	std::thread mainGameLoopThread;
 
@@ -38,6 +35,17 @@ public:
 
 	void Shutdown();
 
-	void RegisterGameObject(GameObject* obj);
+	void RegisterGameObject(std::shared_ptr<GameObject> obj);
+
+	template <typename T, typename... Args>
+	void SpawnObject(Args... args)
+	{
+		// TODO: make sure we can only pass children of GameObject.
+		auto newObj = std::make_shared<T>(args...);
+		sceneGraph->AddObjectToSceneGraph(newObj);
+		RegisterGameObject(newObj);
+	}
+
+	std::shared_ptr<SceneGraph> GetSceneGraph() { return sceneGraph; }
 };
 

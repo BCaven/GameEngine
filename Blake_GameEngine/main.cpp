@@ -1,6 +1,9 @@
 #include "SDL_Manager.h"
 #include "Engine.h"
 #include "RenderEngine.h"
+#include "GameObject.h"
+#include "SceneGraph.h"
+#include "BillboardObject.h"
 
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
@@ -24,16 +27,22 @@ int main(int argc, char** argv)
 
 	sdl.spawnWindow("Test Window 1", 500, 500, false);
 	//sdl.spawnWindow("Test Window 2", 500, 500, false);
+	
+
+	Engine engine = Engine();
+	engine.initialize();
+	//engine.SpawnObject<GameObject>("beholder.bcf");
+	engine.SpawnObject<BillboardObject>("Suzanne.bcf");
+	engine.SpawnObject<GameObject>("ExtrudedCode.bcf");
+
+
+	auto CameraObject = std::make_shared<Camera>();
+
 	RenderEngine renderEngine = RenderEngine();
-	renderEngine.initialize("simple");
+	renderEngine.initialize("simple", engine.GetSceneGraph());
+	renderEngine.SetRenderCamera(CameraObject);
 
-	//Engine engine = Engine();
-	//engine.initialize();
-
-	auto ShapeFromFile = Shape::fromFile("ExtrudedCode.bcf");
-	auto Suzanne = Shape::fromFile("beholder.bcf");
-	renderEngine.addToRenderQueue(ShapeFromFile);
-	renderEngine.addToRenderQueue(Suzanne);
+		
 
 	SDL_Event e;
 	bool quit = false;
@@ -60,13 +69,13 @@ int main(int argc, char** argv)
 				double Delta = Utility::getTimeSeconds() - prevTime;
 				if (e.key.key == SDLK_W)
 				{
-					logger->info("Delta: {}", Delta);
-					renderEngine.camDist += Delta * 10;
+					//logger->info("Delta: {}", Delta);
+					//renderEngine.camDist += Delta * 10;
 				}
 				if (e.key.key == SDLK_S)
 				{
-					logger->info("Delta: {}", Delta);
-					renderEngine.camDist -= Delta * 10;
+					//logger->info("Delta: {}", Delta);
+					//renderEngine.camDist -= Delta * 10;
 				}
 
 			}
@@ -82,5 +91,6 @@ int main(int argc, char** argv)
 		sdl.updateWindows();
 
 	}
+
 	return 0;
 }
