@@ -41,6 +41,12 @@ public:
 		return *instance;
 	}
 
+	static void DeleteInstance()
+	{
+		delete instance;
+		instance = nullptr;
+	}
+
 	void closeWindow(std::uint32_t windowId);
 	void spawnWindow(const std::string name, int width, int height, bool resizable);
 	void updateWindows();

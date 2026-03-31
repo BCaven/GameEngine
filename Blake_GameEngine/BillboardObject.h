@@ -7,8 +7,10 @@ class BillboardObject :
 {
     std::shared_ptr<GameObject> Parent;
 
-    public:
+public:
+
     BillboardObject();
+    BillboardObject(std::shared_ptr<GameObject> target);
     ~BillboardObject();
     BillboardObject(std::string filePath);
 	void Tick(float deltaTime) override;

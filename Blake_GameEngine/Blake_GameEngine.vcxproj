@@ -71,8 +71,9 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\blakcav\SDKs\spdlog\include;C:\Users\blakcav\SDKs\glm_includes;C:\Users\blakcav\SDKs\SDL3-3.4.0\include;C:\Users\blakcav\SDKs\glew-2.3.0\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\blakcav\SDKs\glew-2.3.0\lib\Release\x64;C:\Users\blakcav\SDKs\SDL3-3.4.0\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\blakcav\SDKs\spdlog\include;C:\Users\blakcav\SDKs\glm_includes;C:\Users\blakcav\SDKs\SDL3-3.4.0\include;C:\Users\blakcav\SDKs\glew-2.3.0\include;C:\Users\blakcav\SDKs\libtorch\include;C:\Users\blakcav\SDKs\libtorch\include\torch\csrc\api\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\blakcav\SDKs\glew-2.3.0\lib\Release\x64;C:\Users\blakcav\SDKs\SDL3-3.4.0\lib\x64;C:\Users\blakcav\SDKs\libtorch\lib\;$(LibraryPath)</LibraryPath>
+    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -112,7 +113,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL3.lib;SDL3_test.lib;opengl32.lib;glew32.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL3.lib;SDL3_test.lib;opengl32.lib;glew32.lib;glew32s.lib;torch_cpu.lib;c10.lib;torch.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -137,6 +138,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="RenderEngine.cpp" />
+    <ClCompile Include="RotatingObject.cpp" />
     <ClCompile Include="SceneGraph.cpp" />
     <ClCompile Include="SDL_Manager.cpp" />
     <ClCompile Include="Shape.cpp" />
@@ -150,10 +152,12 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="RenderEngine.h" />
+    <ClInclude Include="RotatingObject.h" />
     <ClInclude Include="SceneGraph.h" />
     <ClInclude Include="SDL_Manager.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="Utility.h" />
+    <ClInclude Include="WorldDefaults.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="simple.frag" />

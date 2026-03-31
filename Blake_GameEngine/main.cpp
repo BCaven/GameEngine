@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "RenderEngine.h"
 #include "GameObject.h"
+#include "RotatingObject.h"
 #include "SceneGraph.h"
 #include "BillboardObject.h"
 
@@ -13,80 +14,70 @@
 #include <cmath>
 #include <thread>
 #include <chrono>
+#include <torch/torch.h>
 
 using namespace std::chrono_literals;
 int main(int argc, char** argv) 
 {
-	const char* FORWARD = "w";
-
 	spdlog::set_level(spdlog::level::info);
 	auto logger = spdlog::stdout_color_mt("main");
 
+	/*
+	link libtorch :)
+	*/
+	if (torch::cuda::is_available())
+	{
+		logger->info("cuda is available!");
+	}
+	else
+	{
+		logger->warn("cuda is not available :(");
+	}
 
 	SDL_Manager& sdl = SDL_Manager::sdl();
 
-	sdl.spawnWindow("Test Window 1", 500, 500, false);
+	sdl.spawnWindow("Test Window 1", 1000, 500, false);
 	//sdl.spawnWindow("Test Window 2", 500, 500, false);
+
+	KeyInputs& inputManager = KeyInputs::inputHandler(&sdl);
 	
 
 	Engine engine = Engine();
-	engine.initialize();
 	//engine.SpawnObject<GameObject>("beholder.bcf");
-	engine.SpawnObject<BillboardObject>("Suzanne.bcf");
-	engine.SpawnObject<GameObject>("ExtrudedCode.bcf");
+	auto BillboardRef = engine.SpawnObject<BillboardObject>("Suzanne.bcf");
+	auto CameraObject = engine.SpawnObject<Camera>("Cone.bcf");
+	BillboardRef->SetParent(CameraObject);
 
+	Quaternion rot_amount(glm::vec3(0, std::numbers::pi / 4, 0));
 
-	auto CameraObject = std::make_shared<Camera>();
+	engine.SpawnObject<RotatingObject>("Suzanne.bcf", glm::vec3(1, 0, 0), glm::vec3(2, 0, 0));
+	engine.SpawnObject<RotatingObject>("Suzanne.bcf", glm::vec3(0, 1, 0), glm::vec3(4, 0, 0));
+	engine.SpawnObject<RotatingObject>("Suzanne.bcf", glm::vec3(0, 0, 1), glm::vec3(6, 0, 0));
 
+	
 	RenderEngine renderEngine = RenderEngine();
 	renderEngine.initialize("simple", engine.GetSceneGraph());
 	renderEngine.SetRenderCamera(CameraObject);
 
-		
+	engine.initialize();
 
-	SDL_Event e;
-	bool quit = false;
+
 	double prevTime = Utility::getTimeSeconds();
-	while (!quit)
+	while (!KeyInputs::QUIT)
 	{
-		while (SDL_PollEvent(&e) != 0)
-		{
-			switch (e.type)
-			{
-			case SDL_EVENT_QUIT:
-				quit = true;
-				break;
-			case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
-				sdl.closeWindow(e.window.windowID);
-				break;
+		// keyinputs should be in a different thread
+		inputManager.handleKeyInputs();
 
-			case SDL_EVENT_WINDOW_RESIZED:
-				break;
-
-			case SDL_EVENT_KEY_DOWN:
-				// TODO: actual input system
-
-				double Delta = Utility::getTimeSeconds() - prevTime;
-				if (e.key.key == SDLK_W)
-				{
-					//logger->info("Delta: {}", Delta);
-					//renderEngine.camDist += Delta * 10;
-				}
-				if (e.key.key == SDLK_S)
-				{
-					//logger->info("Delta: {}", Delta);
-					//renderEngine.camDist -= Delta * 10;
-				}
-
-			}
-		}
-		renderEngine.RenderFrame(Utility::getTimeSeconds());
+		double Delta = Utility::getTimeSeconds() - prevTime;
 		prevTime = Utility::getTimeSeconds();
+
+		renderEngine.RenderFrame(Delta);
+		
 		if (debugging::checkOpenGLErrors())
 		{
-			quit = true;
+			KeyInputs::QUIT = true;
 		}
-
+		
 		std::this_thread::sleep_for(1ms);
 		sdl.updateWindows();
 

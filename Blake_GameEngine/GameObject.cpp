@@ -1,16 +1,20 @@
 #include "GameObject.h"
 
-GameObject::GameObject()
+GameObject::GameObject(std::string filePath, glm::vec3 pos, glm::vec3 s, Quaternion rot)
 {
 	bCanTick = false;
 	bDynamic = false;
 	bVisible = true;
-	position = glm::vec3(0, 0, 0);
-	scale = glm::vec3(1, 1, 1);
+	position = pos;
+	scale = s;
 	linearV = glm::vec3(0, 0, 0);
 	angularV = glm::vec3(0, 0, 0);
-	rotation = Quaternion();
+	rotation = rot;
 	renderElement = -1;
+
+	this->filePath = filePath;
+	shape = Shape::fromFile(filePath);
+
 	logger = spdlog::get("game_object");
 	if (!logger)
 	{
@@ -23,22 +27,13 @@ void GameObject::Tick(float deltaTime)
 	return;
 }
 
-GameObject::GameObject(std::string filePath) : GameObject()
-{
-	this->filePath = filePath;
-	shape = Shape::fromFile(filePath);
-}
-
 GameObject::~GameObject()
 {
 }
 
 glm::mat4 GameObject::getModel()
 {
-	//glm::mat4 model_matrix = glm::translate(glm::rotate(glm::scale(
-	//	glm::mat4(1.0f), scaling), rotation_angle, rotation_axis), translation);
-	// translation * rotation * scale
-	glm::mat4 rotationMat = glm::mat4(1);
-	glm::mat4 model = glm::translate(rotationMat * glm::scale(glm::mat4(1.0f), scale), position);
+	glm::mat4 rotationMat = rotation;
+	glm::mat4 model = glm::translate(glm::mat4(1), position) * rotationMat * glm::scale(glm::mat4(1.0f), scale);
 	return model;
 }

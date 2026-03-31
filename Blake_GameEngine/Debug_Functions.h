@@ -4,7 +4,8 @@
 #include <string>
 #include <fstream>
 #include <vector>
-
+#include <functional>
+#include "Utility.h"
 
 namespace debugging
 {
@@ -19,9 +20,10 @@ namespace debugging
 		}
 		return false;
 	}
-	/*
-	template <typename Callable, typename... Args, typename T>
-	inline T timeIt(double& time, Callable func, Args... args)
+	
+	
+	template <typename T, typename... Args>
+	inline T timeIt(double& time, std::function<T(Args...)> func, Args... args)
 	{
 		double startTime = Utility::getTimeSeconds();
 		T retVal = func(args...);
@@ -29,7 +31,7 @@ namespace debugging
 		time = endTime - startTime;
 		return retVal;
 	}
-	*/
+	
 }
 namespace helper
 {
@@ -59,5 +61,19 @@ namespace helper
 			tokens.push_back(token);
 		}
 		return tokens;
+	}
+
+	template<typename T>
+	inline bool approximately(T inputVal, T testVal)
+	{
+		T approx = 0.0001;
+		if (inputVal - approx < testVal)
+		{
+			if (inputVal + approx > testVal)
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 }

@@ -7,6 +7,8 @@ Engine::Engine()
 	{
 		logger = spdlog::stdout_color_mt("engine");
 	}
+	sceneGraph = std::make_shared<SceneGraph>();
+
 }
 
 void Engine::initialize()
@@ -14,7 +16,6 @@ void Engine::initialize()
 	// Initialization code here
 	bRunning = true;
 
-	sceneGraph = std::make_shared<SceneGraph>();
 
 	// construct our scene graph + register game objects that tick
 	// for now, just going to put them in an array

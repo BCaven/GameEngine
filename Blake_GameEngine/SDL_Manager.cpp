@@ -70,6 +70,10 @@ void SDL_Manager::spawnWindow(const std::string name, int width, int height, boo
 			logger->error("Oh no, GLEW threw an error when starting");
 		}
 		glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
+
+		// trap mouse
+		SDL_SetWindowRelativeMouseMode(windows[count], true);
+
 	}
 	else
 	{
@@ -131,6 +135,8 @@ SDL_Manager::SDL_Manager()
 }
 SDL_Manager::~SDL_Manager()
 {
+	SDL_SetWindowRelativeMouseMode(windows[0], false);
+
 	for (auto window : windows)
 	{
 		SDL_DestroyWindow(window);

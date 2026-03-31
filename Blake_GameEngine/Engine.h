@@ -25,6 +25,8 @@ class Engine
 
 	std::thread mainGameLoopThread;
 
+	void RegisterGameObject(std::shared_ptr<GameObject> obj);
+
 public:
 	Engine();
 	~Engine();
@@ -35,15 +37,14 @@ public:
 
 	void Shutdown();
 
-	void RegisterGameObject(std::shared_ptr<GameObject> obj);
-
 	template <typename T, typename... Args>
-	void SpawnObject(Args... args)
+	std::shared_ptr<T> SpawnObject(Args... args)
 	{
 		// TODO: make sure we can only pass children of GameObject.
-		auto newObj = std::make_shared<T>(args...);
+		std::shared_ptr<T> newObj = std::make_shared<T>(args...);
 		sceneGraph->AddObjectToSceneGraph(newObj);
 		RegisterGameObject(newObj);
+		return newObj;
 	}
 
 	std::shared_ptr<SceneGraph> GetSceneGraph() { return sceneGraph; }
