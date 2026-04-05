@@ -7,6 +7,9 @@
 #include <functional>
 #include "Utility.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 namespace debugging
 {
 	inline bool checkOpenGLErrors()
@@ -35,6 +38,21 @@ namespace debugging
 }
 namespace helper
 {
+	inline bool loadImageFile(std::string fileName, int& width, int& height, int& channels, unsigned char*& data)
+	{
+		data = stbi_load("container.jpg", &width, &height, &channels, 0);
+		if (!data)
+		{
+			return false;
+		}
+		return true;
+	}
+	inline bool freeImage(unsigned char*& data)
+	{
+		stbi_image_free(data);
+		return true;
+	}
+
 	inline bool loadFile(std::string fileName, std::string& outContent)
 	{
 		std::ifstream fileStream(fileName, std::ios::in);

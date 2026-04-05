@@ -16,6 +16,17 @@
 #include "SceneGraph.h"
 #include "Camera.h"
 
+namespace rendering
+{
+	struct TextureFlags
+	{
+		GLuint TextureWrapS = GL_REPEAT;
+		GLuint TextureWrapT = GL_REPEAT;
+		GLuint TextureMinFilter = GL_LINEAR_MIPMAP_LINEAR;
+		GLuint TextureMagFilter = GL_LINEAR;
+	};
+}
+
 
 class RenderEngine
 {
@@ -42,6 +53,9 @@ class RenderEngine
 
 	void loadShaders(std::string shaderName);
 	bool loadShader(std::string shaderFile, GLuint shader);
+	bool loadTexture(unsigned char* data, int width, int height, int channels, GLuint& texture, rendering::TextureFlags flags);
+	bool loadTextureFromFile(std::string filePath, GLuint& texture, rendering::TextureFlags flags);
+
 
 public:
 	RenderEngine();
