@@ -2,6 +2,16 @@
 #include "Utility.h"
 #include "Debug_Functions.h"
 
+
+/*
+TODO: 
+-texture coordinates
+-shape-specific shaders?
+-at the very least, the shape needs to specify what texture it uses
+-and this needs to be stored in the file
+
+*/
+
 Shape::Shape(const size_t vertCount, const std::vector<float>& data)
 {
 	vao = -1;

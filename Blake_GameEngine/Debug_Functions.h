@@ -40,7 +40,7 @@ namespace helper
 {
 	inline bool loadImageFile(std::string fileName, int& width, int& height, int& channels, unsigned char*& data)
 	{
-		data = stbi_load("container.jpg", &width, &height, &channels, 0);
+		data = stbi_load(fileName.c_str(), &width, &height, &channels, 0);
 		if (!data)
 		{
 			return false;
