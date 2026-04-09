@@ -9,7 +9,8 @@ RenderEngine::RenderEngine()
 	uniformIndexLightDir = -1;
 	uniformIndexObjTransform = -1;
 	FrameHistory = 1;
-	
+
+	ActiveShader = Shader("simple");
 	logger = spdlog::get("render_engine");
 	if (!logger)
 	{
@@ -59,69 +60,9 @@ bool RenderEngine::loadTexture(unsigned char* data, int width, int height, int c
 	return true;
 }
 
-bool RenderEngine::loadShader(std::string shaderFile, GLuint shader)
+void RenderEngine::initialize(std::string shaderPrefix, std::shared_ptr<SceneGraph> SceneGraph_ptr)
 {
-	std::string shaderSource = "";
-	if (!helper::loadFile(shaderFile, shaderSource))
-	{
-		spdlog::error("Failed to load vertex shader file: \n{}", shaderFile);
-		return false;
-	}
-	spdlog::info("Loaded vertex shader: \n{}", shaderSource);
-	const char* shaderChar = shaderSource.c_str();
-	glShaderSource(shader, 1, &shaderChar, NULL);
-	glCompileShader(shader);
-
-	int success;
-	char infoLog[512];
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(shader, 512, NULL, infoLog);
-		spdlog::error("shader compilation failed: {}", infoLog);
-		return false;
-	}
-	return true;
-}
-
-void RenderEngine::loadShaders(std::string shaderName)
-{
-	vert = glCreateShader(GL_VERTEX_SHADER);
-	std::string vertShaderFile = shaderName + ".vert";
-	loadShader(vertShaderFile, vert);
-
-	frag = glCreateShader(GL_FRAGMENT_SHADER);
-	std::string fragShaderFile = shaderName + ".frag";
-	loadShader(fragShaderFile, frag);
-
-	program = glCreateProgram();
-	glAttachShader(program, vert);
-	glAttachShader(program, frag);
-	glLinkProgram(program);
-
-	int success;
-	char infoLog[512];
-	glGetProgramiv(program, GL_LINK_STATUS, &success);
-	if (!success)
-	{
-		glGetProgramInfoLog(program, 512, NULL, infoLog);
-		logger->error("Shader program linking failed: {}", infoLog);
-		// error macro
-	}
-	glDeleteShader(vert);
-	glDeleteShader(frag);
-	glUseProgram(0);
-
-	// TODO: better way to handle this
-	uniformIndexMPV = glGetUniformLocation(program, "mpv");
-	uniformIndexLightDir = glGetUniformLocation(program, "lightDirection");
-	uniformIndexObjTransform = glGetUniformLocation(program, "objTransform");
-
-}
-
-void RenderEngine::initialize(std::string shaderName, std::shared_ptr<SceneGraph> SceneGraph_ptr)
-{
-	loadShaders(shaderName);
+	ActiveShader = Shader(shaderPrefix);
 	glEnable(GL_CULL_FACE); // don't show faces not pointing towards the camera
 	//glCullFace(GL_BACK);
 	//glFrontFace(GL_CCW);     
@@ -130,7 +71,7 @@ void RenderEngine::initialize(std::string shaderName, std::shared_ptr<SceneGraph
 	// prep torch tensors
 	// TODO: the screen size :)
 	// TODO: do we want to keep track of multiple prev frames?
-	screen_buffer = torch::zeros({ FrameHistory, 1000, 500, 4 });
+	//screen_buffer = torch::zeros({ FrameHistory, 1000, 500, 4 });
 
 	sceneGraph = SceneGraph_ptr;
 }
@@ -142,14 +83,14 @@ void RenderEngine::RenderFrame(double Delta)
 
 	glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glUseProgram(program);
+	ActiveShader.Use();
 	// TODO: multiple lights
 	glm::vec3 light_direction(std::sin(Delta), 0.5, std::cos(Delta));
 	
 	glm::mat4 view_projection = RenderCamera->BuildCameraMatrix();
 	
-	glUniform3fv(uniformIndexLightDir, 1, glm::value_ptr(light_direction));
-	glUniformMatrix4fv(uniformIndexMPV, 1, GL_FALSE, glm::value_ptr(view_projection));
+	ActiveShader.SetInput("lightDirection", light_direction);
+	ActiveShader.SetInput("mvp", view_projection);
 
 	for (std::shared_ptr<GameObject> gameObj : RenderQueue) {
 		auto shape = gameObj->getShape();
@@ -157,7 +98,7 @@ void RenderEngine::RenderFrame(double Delta)
 	
 
 		glm::mat4 model_matrix = gameObj->getModel();
-		glUniformMatrix4fv(uniformIndexObjTransform, 1, GL_FALSE, glm::value_ptr(model_matrix));
+		ActiveShader.SetInput("objTransform", model_matrix);
 	
 		glDrawArrays(GL_TRIANGLES, 0, shape->getVertexCount());
 	}

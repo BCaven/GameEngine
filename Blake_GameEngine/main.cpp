@@ -16,6 +16,10 @@
 #include <chrono>
 #include <torch/torch.h>
 
+// this should be the only place stb image gets defined
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 using namespace std::chrono_literals;
 int main(int argc, char** argv) 
 {

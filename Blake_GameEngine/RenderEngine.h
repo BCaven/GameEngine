@@ -8,13 +8,14 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 
-#include <torch/torch.h>
+//#include <torch/torch.h>
 
 #include "Debug_Functions.h"
 #include "GameObject.h"
 #include "Utility.h"
 #include "SceneGraph.h"
 #include "Camera.h"
+#include "Shader.h"
 
 namespace rendering
 {
@@ -37,11 +38,18 @@ class RenderEngine
 	GLint uniformIndexLightDir;
 	GLint uniformIndexObjTransform;
 
+	GLuint Deferred_vert_GeoPass;
+	GLuint Deferred_frag_GeoPass;
+	GLuint Deferred_vert_LightingPass;
+	GLuint Deferred_frag_LightingPass;
+
 	int FrameHistory;
 
 	std::shared_ptr<Camera> RenderCamera;
 
 	std::shared_ptr<spdlog::logger> logger;
+
+	Shader ActiveShader;
 
 	// later we will need a scene graph. That time is now :)
 	std::vector<std::shared_ptr<GameObject>> RenderQueue;
@@ -49,10 +57,9 @@ class RenderEngine
 
 	// buffer that includes information about the screen
 	// ideal: this is the same memory that opengl renders to for deferred rendering pipeline
-	torch::Tensor screen_buffer;
+	//torch::Tensor screen_buffer;
 
-	void loadShaders(std::string shaderName);
-	bool loadShader(std::string shaderFile, GLuint shader);
+	// TODO: think about if this is where textures should live
 	bool loadTexture(unsigned char* data, int width, int height, int channels, GLuint& texture, rendering::TextureFlags flags);
 	bool loadTextureFromFile(std::string filePath, GLuint& texture, rendering::TextureFlags flags);
 
@@ -60,8 +67,8 @@ class RenderEngine
 public:
 	RenderEngine();
 	~RenderEngine();
-	void initialize(std::string shaderName, std::shared_ptr<SceneGraph> SceneGraph_ptr);
-	void RenderFrame(double Delta);
+	virtual void initialize(std::string shaderPrefix, std::shared_ptr<SceneGraph> SceneGraph_ptr);
+	virtual void RenderFrame(double Delta);
 	inline void SetRenderCamera(std::shared_ptr<Camera> newCam) { RenderCamera = newCam; }
 };
 
