@@ -28,7 +28,7 @@ public:
 	{
 		return vao;
 	};
-	inline GLsizei getVertexCount()
+	inline size_t getVertexCount()
 	{
 		return pos.size();
 	}

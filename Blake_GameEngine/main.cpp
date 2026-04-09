@@ -14,7 +14,6 @@
 #include <cmath>
 #include <thread>
 #include <chrono>
-#include <torch/torch.h>
 
 // this should be the only place stb image gets defined
 #define STB_IMAGE_IMPLEMENTATION
@@ -28,7 +27,7 @@ int main(int argc, char** argv)
 
 	/*
 	link libtorch :)
-	*/
+	
 	if (torch::cuda::is_available())
 	{
 		logger->info("cuda is available!");
@@ -37,7 +36,7 @@ int main(int argc, char** argv)
 	{
 		logger->warn("cuda is not available :(");
 	}
-
+	*/
 	SDL_Manager& sdl = SDL_Manager::sdl();
 
 	sdl.spawnWindow("Test Window 1", 1000, 500, false);

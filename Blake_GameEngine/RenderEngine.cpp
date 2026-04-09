@@ -73,6 +73,10 @@ void RenderEngine::initialize(std::string shaderPrefix, std::shared_ptr<SceneGra
 	// TODO: do we want to keep track of multiple prev frames?
 	//screen_buffer = torch::zeros({ FrameHistory, 1000, 500, 4 });
 
+	ActiveShader.AddInput("lightDirection");
+	ActiveShader.AddInput("mvp");
+	ActiveShader.AddInput("objTransform");
+
 	sceneGraph = SceneGraph_ptr;
 }
 

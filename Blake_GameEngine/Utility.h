@@ -2,6 +2,8 @@
 #include <chrono>
 #include <atomic>
 #include <SDL3/SDL_timer.h>
+#include <SDL3/SDL_keyboard.h>
+#include <SDL3/SDL_scancode.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
 #include "SDL_Manager.h"
@@ -39,6 +41,12 @@ private:
 	inline static auto logger = spdlog::stdout_color_mt("input");
 
 	static inline SDL_Manager* sdl = nullptr;
+
+	// TODO: constructing this
+	std::map<SDL_Keycode, std::atomic<bool>&> keybindings;
+
+	const bool* keyboardState;
+
 	
 public:
 	

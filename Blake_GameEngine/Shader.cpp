@@ -2,10 +2,10 @@
 
 Shader::Shader(std::string filePath)
 {
-	logger = spdlog::get("render_engine");
+	logger = spdlog::get("shader");
 	if (!logger)
 	{
-		logger = spdlog::stdout_color_mt("render_engine");
+		logger = spdlog::stdout_color_mt("shader");
 	}
 	loadShaders(filePath);
 }
@@ -69,7 +69,7 @@ void Shader::loadShaders(std::string shaderName)
 
 void Shader::Use()
 {
-	logger->warn("This function has not been written");
+	glUseProgram(programID);
 }
 
 void Shader::initShader()
@@ -77,14 +77,27 @@ void Shader::initShader()
 	logger->warn("This function has not been written");
 }
 
-template <typename T>
-void Shader::AddInput(std::string name, std::shared_ptr<T> value)
+GLuint Shader::checkInput(std::string name)
+{
+	auto val = nameIndexMap.find(name);
+	if (val == nameIndexMap.end())
+	{
+		logger->warn("Input {} not found in shader! Registering...", name);
+		// auto create input
+		return AddInput(name);
+	}
+	return val->second;
+}
+
+
+GLuint Shader::AddInput(std::string name)
 {
 	GLuint location = glGetUniformLocation(programID, name.c_str());
 	nameIndexMap[name] = location;
 
 	// in a perfect world, these would auto-update
 	//inputs.push_back({ location, value });
+	return location;
 }
 
 template <typename T>
@@ -95,37 +108,37 @@ void Shader::SetInput(std::string name, T value)
 template <>
 void Shader::SetInput<int>(std::string name, int value)
 {
-	GLuint location = nameIndexMap[name];
+	GLuint location = checkInput(name);
 	glUniform1i(location, value);
 }
 template <>
 void Shader::SetInput<float>(std::string name, float value)
 {
-	GLuint location = nameIndexMap[name];
+	GLuint location = checkInput(name);
 	glUniform1f(location, value);
 }
 template <>
 void Shader::SetInput<glm::vec2>(std::string name, glm::vec2 value)
 {
-	GLuint location = nameIndexMap[name];
+	GLuint location = checkInput(name);
 	glUniform2fv(location, 1, glm::value_ptr(value));
 }
 template <>
 void Shader::SetInput<glm::vec3>(std::string name, glm::vec3 value)
 {
-	GLuint location = nameIndexMap[name];
+	GLuint location = checkInput(name);
 	glUniform3fv(location, 1, glm::value_ptr(value));
 }
 template <>
 void Shader::SetInput<glm::vec4>(std::string name, glm::vec4 value)
 {
-	GLuint location = nameIndexMap[name];
+	GLuint location = checkInput(name);
 	glUniform4fv(location, 1, glm::value_ptr(value));
 }
 template <>
 void Shader::SetInput<glm::mat4>(std::string name, glm::mat4 value)
 {
-	GLuint location = nameIndexMap[name];
+	GLuint location = checkInput(name);
 	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
 }
 

@@ -18,10 +18,10 @@ void KeyInputs::handleKeyInputs()
 	MOUSE_Y = y;
 
 	// TODO: have a better way to do this
-	FORWARD = false;
-	BACKWARD = false;
-	LEFT = false;
-	RIGHT = false;
+	FORWARD = keyboardState[SDL_SCANCODE_W];
+	BACKWARD = keyboardState[SDL_SCANCODE_S];
+	LEFT = keyboardState[SDL_SCANCODE_A];
+	RIGHT = keyboardState[SDL_SCANCODE_D];
 
 	SDL_Event e;
 	while (SDL_PollEvent(&e) != 0)
@@ -37,31 +37,6 @@ void KeyInputs::handleKeyInputs()
 
 		case SDL_EVENT_WINDOW_RESIZED:
 			break;
-
-		case SDL_EVENT_KEY_DOWN:
-			// this will eventually need to follow the map from regsiteKeyBindings
-			// and use https://wiki.libsdl.org/SDL3/BestKeyboardPractices
-			// but not going to worry about it for now
-			if (e.key.key == SDLK_W)
-			{
-				FORWARD = true;
-			}
-			if (e.key.key == SDLK_S)
-			{
-				BACKWARD = true;
-			}
-			if (e.key.key == SDLK_A)
-			{
-				LEFT = true;
-			}
-			if (e.key.key == SDLK_D)
-			{
-				RIGHT = true;
-			}
-			if (e.key.key == SDLK_Q)
-			{
-				QUIT = true;
-			}
 		}
 	}
 }
@@ -81,6 +56,7 @@ KeyInputs::KeyInputs()
 	MOUSE_PRESSED = false;
 	MOUSE_X = 0;
 	MOUSE_Y = 0;
+	keyboardState = SDL_GetKeyboardState(nullptr);
 }
 
 KeyInputs::~KeyInputs()

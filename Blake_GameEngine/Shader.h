@@ -4,11 +4,9 @@
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
-
+#include <variant>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
-
-#include <torch/torch.h>
 
 #include "Debug_Functions.h"
 
@@ -45,6 +43,9 @@ class Shader
 
 	std::map<std::string, GLuint> nameIndexMap;
 
+	GLuint checkInput(std::string name);
+
+
 
 public:
 	Shader() : Shader("simple") {};
@@ -65,8 +66,8 @@ public:
 	// then we auto populate them when the shader gets used
 	// the idea here is that we can implement many different shader pipelines without modifying the underlying render engine directly
 	// since the render engine would not need to know 
-	template <typename T>
-	void AddInput(std::string name, std::shared_ptr<T> value);
+
+	GLuint AddInput(std::string name);
 
 	template <typename T>
 	void SetInput(std::string name, T value);
