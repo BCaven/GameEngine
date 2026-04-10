@@ -1,16 +1,8 @@
 #include "RenderEngine.h"
 
-RenderEngine::RenderEngine()
+RenderEngine::RenderEngine(std::string shaderName) : ActiveShader(shaderName)
 {
-	vert = -1;
-	frag = -1;
-	program = -1;
-	uniformIndexMPV = -1;
-	uniformIndexLightDir = -1;
-	uniformIndexObjTransform = -1;
 	FrameHistory = 1;
-
-	ActiveShader = Shader("simple");
 	logger = spdlog::get("render_engine");
 	if (!logger)
 	{
@@ -20,8 +12,6 @@ RenderEngine::RenderEngine()
 
 RenderEngine::~RenderEngine()
 {
-	glDeleteProgram(program);
-	program = -1;
 }
 
 bool RenderEngine::loadTextureFromFile(std::string filePath, GLuint& texture, rendering::TextureFlags flags)
@@ -60,9 +50,9 @@ bool RenderEngine::loadTexture(unsigned char* data, int width, int height, int c
 	return true;
 }
 
-void RenderEngine::initialize(std::string shaderPrefix, std::shared_ptr<SceneGraph> SceneGraph_ptr)
+void RenderEngine::initialize(std::shared_ptr<SceneGraph> SceneGraph_ptr)
 {
-	ActiveShader = Shader(shaderPrefix);
+	// TODO: have all of this happen in the constructor
 	glEnable(GL_CULL_FACE); // don't show faces not pointing towards the camera
 	//glCullFace(GL_BACK);
 	//glFrontFace(GL_CCW);     
@@ -73,6 +63,7 @@ void RenderEngine::initialize(std::string shaderPrefix, std::shared_ptr<SceneGra
 	// TODO: do we want to keep track of multiple prev frames?
 	//screen_buffer = torch::zeros({ FrameHistory, 1000, 500, 4 });
 
+	// TODO: need to figure out why these always return -1 as the location
 	ActiveShader.AddInput("lightDirection");
 	ActiveShader.AddInput("mvp");
 	ActiveShader.AddInput("objTransform");
@@ -94,7 +85,7 @@ void RenderEngine::RenderFrame(double Delta)
 	glm::mat4 view_projection = RenderCamera->BuildCameraMatrix();
 	
 	ActiveShader.SetInput("lightDirection", light_direction);
-	ActiveShader.SetInput("mvp", view_projection);
+	ActiveShader.SetInput("mpv", view_projection);
 
 	for (std::shared_ptr<GameObject> gameObj : RenderQueue) {
 		auto shape = gameObj->getShape();

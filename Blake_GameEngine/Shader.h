@@ -48,33 +48,19 @@ class Shader
 
 
 public:
-	Shader() : Shader("simple") {};
-	
 	Shader(std::string filePath);
 
-	~Shader() 
-	{
-		glDeleteProgram(programID);
-	}
+	~Shader();
 
-	virtual void Use();
+	void Use();
 
-	// need to also have a way to let the RenderEngine know what to pass in
-	// not sure if I like this method but for now we will leave it
-	// the goal here is to have a template for registering inputs we need to assign (presumably later)
-	// and maybe weak pointers to the values themselves, that would be cool
-	// then we auto populate them when the shader gets used
-	// the idea here is that we can implement many different shader pipelines without modifying the underlying render engine directly
-	// since the render engine would not need to know 
-
+	// each render engine is customized to match its needs
 	GLuint AddInput(std::string name);
 
 	template <typename T>
 	void SetInput(std::string name, T value);
 
-	// TODO: some virtual initialization function here
-	// but this might be packaged in the Use function, idk
-	virtual void initShader();
+	void initShader();
 
 
 	

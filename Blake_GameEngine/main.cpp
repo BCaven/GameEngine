@@ -59,7 +59,7 @@ int main(int argc, char** argv)
 
 	
 	RenderEngine renderEngine = RenderEngine();
-	renderEngine.initialize("simple", engine.GetSceneGraph());
+	renderEngine.initialize(engine.GetSceneGraph());
 	renderEngine.SetRenderCamera(CameraObject);
 
 	engine.initialize();

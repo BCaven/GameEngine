@@ -31,18 +31,6 @@ namespace rendering
 
 class RenderEngine
 {
-	GLuint vert;
-	GLuint frag;
-	GLuint program;
-	GLint uniformIndexMPV;
-	GLint uniformIndexLightDir;
-	GLint uniformIndexObjTransform;
-
-	GLuint Deferred_vert_GeoPass;
-	GLuint Deferred_frag_GeoPass;
-	GLuint Deferred_vert_LightingPass;
-	GLuint Deferred_frag_LightingPass;
-
 	int FrameHistory;
 
 	std::shared_ptr<Camera> RenderCamera;
@@ -65,9 +53,10 @@ class RenderEngine
 
 
 public:
-	RenderEngine();
+	RenderEngine() : RenderEngine("simple") {};
+	RenderEngine(std::string shaderName);
 	~RenderEngine();
-	virtual void initialize(std::string shaderPrefix, std::shared_ptr<SceneGraph> SceneGraph_ptr);
+	virtual void initialize(std::shared_ptr<SceneGraph> SceneGraph_ptr);
 	virtual void RenderFrame(double Delta);
 	inline void SetRenderCamera(std::shared_ptr<Camera> newCam) { RenderCamera = newCam; }
 };

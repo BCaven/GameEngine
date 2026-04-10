@@ -22,6 +22,7 @@ void KeyInputs::handleKeyInputs()
 	BACKWARD = keyboardState[SDL_SCANCODE_S];
 	LEFT = keyboardState[SDL_SCANCODE_A];
 	RIGHT = keyboardState[SDL_SCANCODE_D];
+	QUIT = keyboardState[SDL_SCANCODE_Q];
 
 	SDL_Event e;
 	while (SDL_PollEvent(&e) != 0)

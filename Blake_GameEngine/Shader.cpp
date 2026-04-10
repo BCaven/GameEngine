@@ -10,15 +10,20 @@ Shader::Shader(std::string filePath)
 	loadShaders(filePath);
 }
 
+Shader::~Shader()
+{
+	glDeleteProgram(programID);
+}
+
 bool Shader::loadShader(std::string shaderFile, GLuint shader)
 {
 	std::string shaderSource = "";
 	if (!helper::loadFile(shaderFile, shaderSource))
 	{
-		spdlog::error("Failed to load shader file: \n{}", shaderFile);
+		logger->warn("Failed to load shader file: \n{}", shaderFile);
 		return false;
 	}
-	spdlog::info("Loaded shader: \n{}", shaderSource);
+	logger->info("Loaded shader: \n{}", shaderSource);
 	const char* shaderChar = shaderSource.c_str();
 	glShaderSource(shader, 1, &shaderChar, NULL);
 	glCompileShader(shader);
@@ -29,7 +34,7 @@ bool Shader::loadShader(std::string shaderFile, GLuint shader)
 	if (!success)
 	{
 		glGetShaderInfoLog(shader, 512, NULL, infoLog);
-		spdlog::error("shader compilation failed: {}", infoLog);
+		logger->error("shader compilation failed: {}", infoLog);
 		return false;
 	}
 	return true;
@@ -49,6 +54,7 @@ void Shader::loadShaders(std::string shaderName)
 	loadShader(fragShaderFile, frag);
 
 	programID = glCreateProgram();
+	logger->info("Attaching above shaders to program: {}", programID);
 	glAttachShader(programID, vert);
 	glAttachShader(programID, frag);
 	glLinkProgram(programID);
@@ -82,8 +88,6 @@ GLuint Shader::checkInput(std::string name)
 	auto val = nameIndexMap.find(name);
 	if (val == nameIndexMap.end())
 	{
-		logger->warn("Input {} not found in shader! Registering...", name);
-		// auto create input
 		return AddInput(name);
 	}
 	return val->second;
@@ -93,6 +97,7 @@ GLuint Shader::checkInput(std::string name)
 GLuint Shader::AddInput(std::string name)
 {
 	GLuint location = glGetUniformLocation(programID, name.c_str());
+	logger->info("Generated location {} for {} using program {}", location, name, programID);
 	nameIndexMap[name] = location;
 
 	// in a perfect world, these would auto-update
