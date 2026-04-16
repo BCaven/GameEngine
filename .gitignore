@@ -365,3 +365,4 @@ FodyWeavers.xsd
 /Blake_GameEngine/Blake_GameEngine.vcxproj.filters
 /Blake_GameEngine/beholder.bcf
 /Blake_GameEngine/Blake_GameEngine.vcxproj
+*.buvf

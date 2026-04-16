@@ -18,20 +18,22 @@ def write_bcf_data(filepath):
     me.calc_loop_triangles()
     str_vertices = []
     str_normals = []
+    str_uvs = []
     print(f"Found {triCount} triangles")
     print(f"num triangles from loop_triangles: {len(me.loop_triangles)}")
     for tri in me.loop_triangles:
-        for vert_index in tri.vertices:
+        for vert_index, loop_index in zip(tri.vertices, tri.loops):
+            l = me.uv_layers.active.data[loop_index].uv
             v = me.vertices[vert_index]
             str_vertices.append(f"{v.co[0]} {v.co[1]} {v.co[2]}")
             str_normals.append(f"{v.normal[0]} {v.normal[1]} {v.normal[2]}")
-            
+            str_uvs.append(f"{l[0]} {l[1]}")
     #str_vertices = [f"{v.co[0]} {v.co[1]} {v.co[2]}" for v in me.vertices]
     #str_normals = [f"{v.normal[0]} {v.normal[1]} {v.normal[2]}" for v in me.vertices]
     print(f"Num vertices: {len(str_vertices)}")
     f = open(filepath, "w", encoding='utf-8')
     f.write(f"{len(str_vertices)} ")
-    f.write(f"{' '.join(str_vertices)} {' '.join(str_normals)}")
+    f.write(f"{' '.join(str_vertices)} {' '.join(str_normals)} {' '.join(str_uvs)}")
     f.close()
 
     return {'FINISHED'}
@@ -50,7 +52,7 @@ class ExportBCFData(Operator, ExportHelper):
     bl_label = "Export mesh in BCF format"
 
     # ExportHelper mix-in class uses this.
-    filename_ext = ".bcf"
+    filename_ext = ".buvf"
 
     filter_glob: StringProperty(
         default="*.bcf",

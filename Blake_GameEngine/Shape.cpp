@@ -21,7 +21,7 @@ Shape::Shape(const size_t vertCount, const std::vector<float>& data)
 	{
 		logger = spdlog::stdout_color_mt("shape");
 	}
-	if (data.size() != vertCount * 3 * 2)
+	if (data.size() != vertCount * 8)
 	{
 		logger->error("Data size does not match expected size for given vertex count!");
 		return;
@@ -34,9 +34,12 @@ Shape::Shape(const size_t vertCount, const std::vector<float>& data)
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * data.size(), &data[0], GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	size_t offset = vertCount * ( 3 * sizeof(float)); // Offset: number of floats = num vertices * 3
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*) offset);
+	offset = vertCount * (3 * 2 * sizeof(float)); // Offset: number of floats = num vertices * 3 * 2
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*) offset);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
@@ -103,18 +106,34 @@ std::shared_ptr<Shape> Shape::fromFile(std::string fileName)
 		if (vertCount == -1)
 		{
 			vertCount = std::stoi(line);
-			floatData.reserve(vertCount * 2 * 3);
+			floatData.reserve(vertCount * 8); // grab room for UVs too even if we do not write them
 		}
 		else
 		{
 			floatData.push_back(std::stof(line));
 		}
 	}
-	if (floatData.size() != vertCount * 2 * 3)
+	
+	if (floatData.size() == vertCount * 2 * 3)
 	{
-		logger->error("Failed to parse {}, expected {} floats but got {}", fileName, vertCount * 2 * 3, floatData.size());
+		// fill the rest with dummy UV coordinates (0, 0), (0, 1), (1, 0) over and over
+		if (vertCount % 3 != 0)
+		{
+			logger->warn("Our vertex count is not a multiple of 3 which suggests we do not have triangles");
+		}
+		// filling in three verticies at a time
+		for (int i = 0; i < vertCount; i += 3)
+		{
+			floatData.insert(floatData.end(), { 0, 0, 0, 1, 1, 0 });
+		}
+	}
+
+	if (floatData.size() != vertCount * 2 * 3 && floatData.size() != vertCount * 8)
+	{
+		logger->error("Failed to parse {}, expected {} or {} floats but got {}", fileName, vertCount * 2 * 3, vertCount * 8, floatData.size());
 		return nullptr;
 	}
+
 	logger->info("Finished reading file, time: {}", Utility::getTimeSeconds() - startTime);
 	startTime = Utility::getTimeSeconds();
 	std::shared_ptr<Shape> constructedShape(new Shape(vertCount, floatData));

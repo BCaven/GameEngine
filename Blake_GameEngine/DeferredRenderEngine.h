@@ -15,7 +15,8 @@ public:
 		- prefix.light.vert
 		- prefix.light.frag
 	*/
-	DeferredRenderEngine();
+	DeferredRenderEngine() : DeferredRenderEngine("deferred_basic") {};
+	DeferredRenderEngine(std::string shaderPrefix);
 	void initialize(std::shared_ptr<SceneGraph> SceneGraph_ptr) override;
 	void RenderFrame(double Delta) override;
 

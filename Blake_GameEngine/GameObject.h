@@ -27,6 +27,11 @@ protected:
 	
 
 public:
+	/*
+	TODO: GameObject file type so we can just auto load them
+
+	TODO: support for multiple shapes in a GameObject
+	*/
 	GameObject() : GameObject("default.bcf") {}
 	~GameObject();
 	GameObject(std::string filePath) : GameObject(filePath, glm::vec3(0), glm::vec3(1), glm::vec3(0)) {}

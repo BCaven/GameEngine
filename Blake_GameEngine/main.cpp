@@ -47,15 +47,15 @@ int main(int argc, char** argv)
 
 	Engine engine = Engine();
 	//engine.SpawnObject<GameObject>("beholder.bcf");
-	auto BillboardRef = engine.SpawnObject<BillboardObject>("Suzanne.bcf");
+	auto BillboardRef = engine.SpawnObject<BillboardObject>("cube.buvf");
 	auto CameraObject = engine.SpawnObject<Camera>("Cone.bcf");
 	BillboardRef->SetParent(CameraObject);
 
 	Quaternion rot_amount(glm::vec3(0, std::numbers::pi / 4, 0));
 
-	engine.SpawnObject<RotatingObject>("Suzanne.bcf", glm::vec3(1, 0, 0), glm::vec3(2, 0, 0));
-	engine.SpawnObject<RotatingObject>("Suzanne.bcf", glm::vec3(0, 1, 0), glm::vec3(4, 0, 0));
-	engine.SpawnObject<RotatingObject>("Suzanne.bcf", glm::vec3(0, 0, 1), glm::vec3(6, 0, 0));
+	engine.SpawnObject<RotatingObject>("suzanne.buvf", glm::vec3(1, 0, 0), glm::vec3(2, 0, 0));
+	engine.SpawnObject<RotatingObject>("suzanne.buvf", glm::vec3(0, 1, 0), glm::vec3(4, 0, 0));
+	engine.SpawnObject<RotatingObject>("suzanne.buvf", glm::vec3(0, 0, 1), glm::vec3(6, 0, 0));
 
 	
 	RenderEngine renderEngine = RenderEngine();
