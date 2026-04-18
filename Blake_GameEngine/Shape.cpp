@@ -44,6 +44,9 @@ Shape::Shape(const size_t vertCount, const std::vector<float>& data)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
+	auto TexFlags = rendering::TextureFlags();
+	loadTextureFromFile("default_texture.jpg", tex, TexFlags);
+
 	if (debugging::checkOpenGLErrors())
 	{
 		logger->warn("OpenGL errors when creating the shape!");
