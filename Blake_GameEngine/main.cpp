@@ -44,6 +44,9 @@ int main(int argc, char** argv)
 
 	KeyInputs& inputManager = KeyInputs::inputHandler(&sdl);
 	
+	// instancing :)
+	auto InstancedShader = std::make_shared<Shader>("simple");
+	auto InstancedSuzanne = Shape::fromFile("suzanne.buvf", InstancedShader);
 
 	Engine engine = Engine();
 	//engine.SpawnObject<GameObject>("beholder.bcf");
@@ -53,9 +56,9 @@ int main(int argc, char** argv)
 
 	Quaternion rot_amount(glm::vec3(0, std::numbers::pi / 4, 0));
 
-	engine.SpawnObject<RotatingObject>("suzanne.buvf", glm::vec3(1, 0, 0), glm::vec3(2, 0, 0));
-	engine.SpawnObject<RotatingObject>("suzanne.buvf", glm::vec3(0, 1, 0), glm::vec3(4, 0, 0));
-	engine.SpawnObject<RotatingObject>("suzanne.buvf", glm::vec3(0, 0, 1), glm::vec3(6, 0, 0));
+	engine.SpawnObject<RotatingObject>(InstancedSuzanne, glm::vec3(1, 0, 0), glm::vec3(2, 0, 0));
+	engine.SpawnObject<RotatingObject>(InstancedSuzanne, glm::vec3(0, 1, 0), glm::vec3(4, 0, 0));
+	engine.SpawnObject<RotatingObject>(InstancedSuzanne, glm::vec3(0, 0, 1), glm::vec3(6, 0, 0));
 
 	
 	RenderEngine renderEngine = RenderEngine();

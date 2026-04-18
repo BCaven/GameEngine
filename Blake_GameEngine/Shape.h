@@ -3,6 +3,7 @@
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
 #include <vector>
+#include <memory>
 
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
@@ -10,6 +11,9 @@
 #include <fstream>
 
 #include "Debug_Functions.h"
+#include "Utility.h"
+#include "Shader.h"
+
 
 /*
 TODO: make shapes instance-able
@@ -27,13 +31,30 @@ private:
 	std::vector<glm::vec2> uv;
 	GLuint vao;
 	GLuint vbo;
+	GLuint tex;
 	std::shared_ptr<spdlog::logger> logger;
 
-public:
-	static std::shared_ptr<Shape> fromFile(std::string fileName);
+	std::shared_ptr<Shader> ActiveShader;
+
+	bool loadTextureFromFile(std::string filePath, GLuint& texture, rendering::TextureFlags flags);
+	bool loadTexture(unsigned char* data, int width, int height, int channels, GLuint& texture, rendering::TextureFlags flags);
 
 	Shape(const size_t vertCount, const std::vector<float>& data);
-	Shape(const size_t vertCount, const std::vector<float>& data, const std::vector<float>& uvCoords);
+
+public:
+	// need to make this idiot proof
+	template <typename T>
+	static std::shared_ptr<Shape> fromFile(std::string fileName, T shader);
+
+	//Shape(const size_t vertCount, const std::vector<float>& data) : Shape(vertCount, data, "simple") {};
+	Shape(const size_t vertCount, const std::vector<float>& data, std::shared_ptr<Shader> ShaderPtr) : Shape(vertCount, data) 
+	{
+		ActiveShader = ShaderPtr;
+	};
+	Shape(const size_t vertCount, const std::vector<float>& data, std::string ShaderPrefix) : Shape(vertCount, data)
+	{
+		ActiveShader = std::make_shared<Shader>(ShaderPrefix);
+	};
 
 	~Shape();
 	inline GLuint getVAO() 
@@ -43,6 +64,16 @@ public:
 	inline size_t getVertexCount()
 	{
 		return pos.size();
+	}
+
+	inline void bindTex()
+	{
+		if (tex != -1)
+		{
+			ActiveShader->SetInput("bTex", true);
+			glBindTexture(GL_TEXTURE_2D, tex);
+			glBindVertexArray(vao);
+		}
 	}
 };
 

@@ -6,6 +6,7 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include "Quaternion.h"
 #include "Shape.h"
+#include "Shader.h"
 
 class GameObject
 {
@@ -35,8 +36,13 @@ public:
 	GameObject() : GameObject("default.bcf") {}
 	~GameObject();
 	GameObject(std::string filePath) : GameObject(filePath, glm::vec3(0), glm::vec3(1), glm::vec3(0)) {}
-	GameObject(std::string filePath, glm::vec3 pos, glm::vec3 s, glm::vec3 rot) : GameObject(filePath, pos, s, Quaternion(rot)) {}
-	GameObject(std::string filePath, glm::vec3 pos, glm::vec3 s, Quaternion rot);
+	GameObject(std::string filePath, glm::vec3 pos, glm::vec3 s, glm::vec3 rot) : GameObject(filePath, "simple", pos, s, Quaternion(rot)) {}
+	GameObject(std::string filePath, glm::vec3 pos, glm::vec3 s, Quaternion rot) : GameObject(filePath, "simple", pos, s, rot) {}
+	template <typename shaderType>
+	GameObject(std::string filePath, shaderType ShaderPrefix, glm::vec3 pos, glm::vec3 s, Quaternion rot) : GameObject(Shape::fromFile(filePath, ShaderPrefix), pos, s, rot) {};
+
+	GameObject(std::shared_ptr<Shape> shapePtr, glm::vec3 pos, glm::vec3 s, glm::vec3 rot) : GameObject(shapePtr, pos, s, Quaternion(rot)) {};
+	GameObject(std::shared_ptr<Shape> shapePtr, glm::vec3 pos, glm::vec3 s, Quaternion rot);
 
 	glm::mat4 getModel();
 	int getRenderElement() { return renderElement; }

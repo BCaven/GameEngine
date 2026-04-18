@@ -110,6 +110,13 @@ void Shader::SetInput(std::string name, T value)
 {
 	logger->warn("This type is not supported!");
 }
+template<>
+void Shader::SetInput<bool>(std::string name, bool value)
+{
+	GLuint location = checkInput(name);
+	glUniform1i(location, value);
+}
+
 template <>
 void Shader::SetInput<int>(std::string name, int value)
 {

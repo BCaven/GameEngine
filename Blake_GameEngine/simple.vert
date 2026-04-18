@@ -9,6 +9,7 @@ smooth out vec3 normal;
 smooth out vec3 lightdir;
 smooth out vec2 uvCoord;
 
+
 void main()
 {
 	normal = norm;

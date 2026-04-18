@@ -12,6 +12,7 @@ RenderEngine::RenderEngine(std::string shaderName) : ActiveShader(shaderName)
 
 RenderEngine::~RenderEngine()
 {
+	// check if anything needs to be explicitly freed
 }
 
 bool RenderEngine::loadTextureFromFile(std::string filePath, GLuint& texture, rendering::TextureFlags flags)
@@ -64,6 +65,8 @@ void RenderEngine::initialize(std::shared_ptr<SceneGraph> SceneGraph_ptr)
 	//screen_buffer = torch::zeros({ FrameHistory, 1000, 500, 4 });
 
 	// TODO: need to figure out why these always return -1 as the location
+
+
 	ActiveShader.AddInput("lightDirection");
 	ActiveShader.AddInput("mvp");
 	ActiveShader.AddInput("objTransform");
@@ -90,7 +93,8 @@ void RenderEngine::RenderFrame(double Delta)
 	for (std::shared_ptr<GameObject> gameObj : RenderQueue) {
 		auto shape = gameObj->getShape();
 		glBindVertexArray(shape->getVAO());
-	
+		// bind texture if we have it
+		shape->bindTex();
 
 		glm::mat4 model_matrix = gameObj->getModel();
 		ActiveShader.SetInput("objTransform", model_matrix);

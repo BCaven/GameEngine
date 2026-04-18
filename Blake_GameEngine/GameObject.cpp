@@ -1,6 +1,6 @@
 #include "GameObject.h"
 
-GameObject::GameObject(std::string filePath, glm::vec3 pos, glm::vec3 s, Quaternion rot)
+GameObject::GameObject(std::shared_ptr<Shape> shapePtr, glm::vec3 pos, glm::vec3 s, Quaternion rot)
 {
 	bCanTick = false;
 	bDynamic = false;
@@ -13,7 +13,7 @@ GameObject::GameObject(std::string filePath, glm::vec3 pos, glm::vec3 s, Quatern
 	renderElement = -1;
 
 	this->filePath = filePath;
-	shape = Shape::fromFile(filePath);
+	shape = shapePtr;
 
 	logger = spdlog::get("game_object");
 	if (!logger)

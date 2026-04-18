@@ -17,18 +17,6 @@
 #include "Camera.h"
 #include "Shader.h"
 
-namespace rendering
-{
-	struct TextureFlags
-	{
-		GLuint TextureWrapS = GL_REPEAT;
-		GLuint TextureWrapT = GL_REPEAT;
-		GLuint TextureMinFilter = GL_LINEAR_MIPMAP_LINEAR;
-		GLuint TextureMagFilter = GL_LINEAR;
-	};
-}
-
-
 class RenderEngine
 {
 	int FrameHistory;
