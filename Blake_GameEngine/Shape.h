@@ -75,5 +75,7 @@ public:
 			glBindVertexArray(vao);
 		}
 	}
+
+	void getAABB(glm::vec3& min, glm::vec3& max);
 };
 

@@ -2,7 +2,11 @@
 
 SceneGraph::SceneGraph()
 {
-
+	logger = spdlog::get("SceneGraph");
+	if (!logger)
+	{
+		logger = spdlog::stdout_color_mt("SceneGraph");
+	}
 }
 SceneGraph::~SceneGraph()
 {

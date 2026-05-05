@@ -1,13 +1,13 @@
 #include "Engine.h"
 
-Engine::Engine()
+Engine::Engine(std::shared_ptr<SceneGraph> sceneGraph_ptr)
 {
 	logger = spdlog::get("engine");
 	if (!logger)
 	{
 		logger = spdlog::stdout_color_mt("engine");
 	}
-	sceneGraph = std::make_shared<SceneGraph>();
+	sceneGraph = sceneGraph_ptr;
 
 }
 

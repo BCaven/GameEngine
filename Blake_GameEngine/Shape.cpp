@@ -186,3 +186,22 @@ bool Shape::loadTexture(unsigned char* data, int width, int height, int channels
 
 	return true;
 }
+
+void Shape::getAABB(glm::vec3& min, glm::vec3& max)
+{
+	if (pos.size() == 0)
+	{
+		logger->warn("Building AABB but no vertices were found");
+		return;
+	}
+	min = pos[0];
+	max = pos[0];
+	// this gets the shape aabb in local coordinates, will need to use its owner's
+	// model matrix to move it to world coordinates
+	for (auto vert : pos)
+	{
+		min = helper::minComponents(vert, min);
+		max = helper::maxComponents(vert, max);
+	}
+	
+}

@@ -28,7 +28,7 @@ class Engine
 	void RegisterGameObject(std::shared_ptr<GameObject> obj);
 
 public:
-	Engine();
+	Engine(std::shared_ptr<SceneGraph> sceneGraph_ptr);
 	~Engine();
 
 	void initialize();

@@ -32,5 +32,9 @@ public:
 
 	glm::mat4 BuildCameraMatrix();
 
+	inline glm::vec3 GetForward() const { return camera_forward; }
+
+	inline glm::vec3 GetUp() const { return camera_up; }
+
 };
 

@@ -93,4 +93,21 @@ namespace helper
 		}
 		return false;
 	}
+
+	inline static glm::vec3 maxComponents(glm::vec3 first, glm::vec3 second)
+	{
+		glm::vec3 r(0);
+		r.x = fmaxf(first.x, second.x);
+		r.y = fmaxf(first.y, second.y);
+		r.z = fmaxf(first.z, second.z);
+		return r;
+	}
+	inline static glm::vec3 minComponents(glm::vec3 first, glm::vec3 second)
+	{
+		glm::vec3 r(0);
+		r.x = fminf(first.x, second.x);
+		r.y = fminf(first.y, second.y);
+		r.z = fminf(first.z, second.z);
+		return r;
+	}
 }
