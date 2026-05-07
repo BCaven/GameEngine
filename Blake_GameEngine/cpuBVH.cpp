@@ -40,7 +40,7 @@ void cpuBVH::UpdateNodeBounds(unsigned int nodeIdx)
 }
 void cpuBVH::Subdivide(unsigned int nodeIdx)
 {
-	auto node = bvhNode[nodeIdx];
+	auto& node = bvhNode[nodeIdx];
 	if (node.primCount <= 2) 
 	{
 		logger->info("When subdividing, {} <= 2", node.primCount);
@@ -57,9 +57,9 @@ void cpuBVH::Subdivide(unsigned int nodeIdx)
 	int j = i + node.primCount - 1;
 	// sort them based on the split
 	logger->info("Split axis: {}", axis);
-	while (i <= j)
+	while (i < j)
 	{
-		logger->info("Checking axis of prim {}\ncenter: {}", i, primitives[i].center[axis]);
+		logger->info("Checking axis of prim {}\ncenter: {}\nsplit: {}", i, primitives[i].center[axis], splitPos);
 		// this needs to be checking the centroid of the primitive
 		if (primitives[i].center[axis] <= splitPos)
 		{
@@ -68,7 +68,11 @@ void cpuBVH::Subdivide(unsigned int nodeIdx)
 		}
 		else
 		{
-			logger->info("Swapping prims {}, {}", i, j);
+			j--;
+
+			logger->info("Swapping prims {}, {}\n{}'s center: {}\n{}'s center: {}", i, j,
+				i, primitives[i].center[axis],
+				j, primitives[j].center[axis]);			
 			// swap
 			auto t = primitives[i];
 			primitives[i] = primitives[j];
@@ -86,9 +90,15 @@ void cpuBVH::Subdivide(unsigned int nodeIdx)
 	bvhNode[leftChildIdx].primCount = leftCount;
 	bvhNode[rightChildIdx].firstPrim = i;
 	bvhNode[rightChildIdx].primCount = node.primCount - leftCount;
+	if (leftChildIdx > MAX_PRIMS * 2 - 1 || rightChildIdx > MAX_PRIMS * 2 - 1)
+	{
+		logger->info("Ran out of nodes");
+		return;
+	}
 	node.left = leftChildIdx;
+	node.right = rightChildIdx;
 	node.primCount = 0;
-	logger->info("Adding nodes:\nleft: {} | right: {}", leftChildIdx, rightChildIdx);
+	logger->info("Adding child nodes to node: {}:\nleft: {} | right: {}", nodeIdx, leftChildIdx, rightChildIdx);
 	UpdateNodeBounds(leftChildIdx);
 	UpdateNodeBounds(rightChildIdx);
 	Subdivide(leftChildIdx);
@@ -119,23 +129,30 @@ void cpuBVH::intersectBVH(Ray& ray, const unsigned int nodeIdx)
 	}
 
 }
+
 bool cpuBVH::intersectAABB(const Ray& ray, const glm::vec3 bmin, const glm::vec3 bmax)
 {
-	// TODO: pretty sure this does not have to be done explicitly by component
-	float tx1 = (bmin.x - ray.origin.x) / ray.direction.x,
+	float tx1 = (bmin.x - ray.origin.x) / ray.direction.x, 
 		tx2 = (bmax.x - ray.origin.x) / ray.direction.x;
-	float tmin = std::min(tx1, tx2), tmax = std::max(tx1, tx2);
-	float ty1 = (bmin.y - ray.origin.y) / ray.direction.y,
+	float tmin = std::min(tx1, tx2), 
+		tmax = std::max(tx1, tx2);
+	float ty1 = (bmin.y - ray.origin.y) / ray.direction.y, 
 		ty2 = (bmax.y - ray.origin.y) / ray.direction.y;
-	tmin = std::max(tmin, std::min(ty1, ty2));
-	tmax = std::min(tmax, std::max(ty1, ty2));
-	float tz1 = (bmin.z - ray.origin.z) / ray.direction.z,
+	tmin = std::max(tmin, std::min(ty1, ty2)), 
+		tmax = std::min(tmax, std::max(ty1, ty2));
+	float tz1 = (bmin.z - ray.origin.z) / ray.direction.z, 
 		tz2 = (bmax.z - ray.origin.z) / ray.direction.z;
-	tmin = std::max(tmin, std::min(tz1, tz2));
-	tmax = std::min(tmax, std::max(tz1, tz2));
-	bool r = tmax >= tmin && tmin < ray.t && tmax > 0;
-	return r;
+
+	tmin = std::max(tmin, std::min(tz1, tz2)), 
+		tmax = std::min(tmax, std::max(tz1, tz2));
+
+	if (!(tmax >= tmin && tmin < ray.t && tmax > 0))
+	{
+		logger->info("tmax: {} | tmin: {} | ray.t: {}\n{} | {} | {}", tmax, tmin, ray.t, tmax >= tmin, tmin <= ray.t, tmax > 0);
+	}
+	return tmax >= tmin && tmin < ray.t && tmax > 0;
 }
+
 void cpuBVH::intersectPrim(Ray& ray, const Primitive& primitive)
 {
 	// TODO: send the ray down the primitive's bvh

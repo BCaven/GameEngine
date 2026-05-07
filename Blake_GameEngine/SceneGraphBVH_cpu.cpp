@@ -10,14 +10,20 @@ void SceneGraphBVH_cpu::AddObjectToSceneGraph(std::shared_ptr<GameObject> newObj
 	// translate to world coordinates
 	glm::vec4 min4(min, 1.0f), max4(max, 1.0f);
 	auto model = newObj->getModel();
-	glm::vec3 worldMin(min4 * model);
-	glm::vec3 worldMax(max4 * model);
+	logger->info("Min: {}, {}, {}", min4.x, min4.y, min4.z);
+	glm::vec4 minShift = model * min4;
+	logger->info("Min post shift: {}, {}, {}", minShift.x, minShift.y, minShift.z);
+	glm::vec3 worldMin(model * min4);
+	glm::vec3 worldMax(model * max4);
 	// calc center (just doing the bvh center)
 	glm::vec3 center = worldMin + ((worldMax - worldMin) / 2.0f);
 	bvh.primitives[bvh.NumPrims].maxCoords = worldMax;
 	bvh.primitives[bvh.NumPrims].minCoords = worldMin;
 	bvh.primitives[bvh.NumPrims].center = center;
-
+	logger->info("Adding shape:\ncenter: {}, {}, {}\nmin: {}, {}, {}\nmax: {}, {}, {}",
+		center.x, center.y, center.z,
+		worldMin.x, worldMin.y, worldMin.z,
+		worldMax.x, worldMax.y, worldMax.z);
 	GameObjects.push_back(newObj);
 	bvh.primitives[bvh.NumPrims].Idx = GameObjects.size() - 1;
 	//logger->info("center of primitive {}", center);
@@ -27,7 +33,7 @@ void SceneGraphBVH_cpu::AddObjectToSceneGraph(std::shared_ptr<GameObject> newObj
 	bvh.BuildBVH();
 }
 
-#define X_WIDTH 30.0f
+#define X_WIDTH 1.0f
 #define Y_WIDTH 1.0f
 #define FRUST_WIDTH 1.0f
 #define FRUST_HEIGHT 1.0f

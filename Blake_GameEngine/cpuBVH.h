@@ -4,13 +4,14 @@
 #include "Shape.h"
 #include <glm/vec3.hpp>
 
-#define MAX_PRIMS 100
+#define MAX_PRIMS 1000
 
 struct BVHNode
 {
 	// TODO: gpu version of this will need to be a multiple of 32 bytes for memory performance
 	glm::vec3 aabbMin, aabbMax = glm::vec3(-1);
-	int left, right = -1;
+	int left = -1;
+	int right = -1;
 	int firstPrim, primCount = -1;
 };
 struct Primitive

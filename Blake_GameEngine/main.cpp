@@ -51,22 +51,20 @@ int main(int argc, char** argv)
 	auto sceneGraph = std::make_shared<SceneGraphBVH_cpu>();
 	Engine engine = Engine(sceneGraph);
 	//engine.SpawnObject<GameObject>("beholder.bcf");
-	auto BillboardRef = engine.SpawnObject<BillboardObject>("cube.buvf");
+	//auto BillboardRef = engine.SpawnObject<BillboardObject>("cube.buvf");
 	auto CameraObject = engine.SpawnObject<Camera>("Cone.bcf");
-	engine.SpawnObject<RotatingObject>(InstancedSuzanne, glm::vec3(1, 0, 0), glm::vec3(2, 0, 0));
+	//engine.SpawnObject<RotatingObject>(InstancedSuzanne, glm::vec3(1, 0, 0), glm::vec3(2, 0, 0));
 
 	sceneGraph->setActiveCamera(CameraObject);
-	BillboardRef->SetParent(CameraObject);
+	//BillboardRef->SetParent(CameraObject);
 
 	Quaternion rot_amount(glm::vec3(0, std::numbers::pi / 4, 0));
-	/*
-	for (int i = -16; i < 16; i+=8) for (int j = -5; j < 5; j+=2)
+	
+	for (int i = 0; i < 1; i+=1)
 	{
-		engine.SpawnObject<RotatingObject>(InstancedSuzanne, glm::vec3(1, 0, 0), glm::vec3(i, 0, j));
-		engine.SpawnObject<RotatingObject>(InstancedSuzanne, glm::vec3(0, 1, 0), glm::vec3(i + 2, 0, j));
-		engine.SpawnObject<RotatingObject>(InstancedSuzanne, glm::vec3(0, 0, 1), glm::vec3(i + 4, 0, j));
+		engine.SpawnObject<RotatingObject>(InstancedSuzanne, glm::vec3(1, 0, 0), glm::vec3(i, 0, 0));
 	}
-	*/
+	
 	RenderEngine renderEngine = RenderEngine();
 	renderEngine.initialize(engine.GetSceneGraph());
 	renderEngine.SetRenderCamera(CameraObject);

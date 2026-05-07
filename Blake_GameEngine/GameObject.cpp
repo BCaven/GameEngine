@@ -1,4 +1,4 @@
-#include "GameObject.h"
+ #include "GameObject.h"
 
 GameObject::GameObject(std::shared_ptr<Shape> shapePtr, glm::vec3 pos, glm::vec3 s, Quaternion rot)
 {
