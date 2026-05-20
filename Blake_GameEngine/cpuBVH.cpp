@@ -132,25 +132,17 @@ void cpuBVH::intersectBVH(Ray& ray, const unsigned int nodeIdx)
 
 bool cpuBVH::intersectAABB(const Ray& ray, const glm::vec3 bmin, const glm::vec3 bmax)
 {
-	float tx1 = (bmin.x - ray.origin.x) / ray.direction.x, 
-		tx2 = (bmax.x - ray.origin.x) / ray.direction.x;
-	float tmin = std::min(tx1, tx2), 
-		tmax = std::max(tx1, tx2);
-	float ty1 = (bmin.y - ray.origin.y) / ray.direction.y, 
-		ty2 = (bmax.y - ray.origin.y) / ray.direction.y;
-	tmin = std::max(tmin, std::min(ty1, ty2)), 
-		tmax = std::min(tmax, std::max(ty1, ty2));
-	float tz1 = (bmin.z - ray.origin.z) / ray.direction.z, 
-		tz2 = (bmax.z - ray.origin.z) / ray.direction.z;
+	glm::vec3 invRayDir = glm::normalize( 1.0f / ray.direction );
 
-	tmin = std::max(tmin, std::min(tz1, tz2)), 
-		tmax = std::min(tmax, std::max(tz1, tz2));
+	logger->info("invRayDir: {}, {}, {}", invRayDir.x, invRayDir.y, invRayDir.z);
+	glm::vec3 tLower = (bmin - ray.origin) * invRayDir;
+	glm::vec3 tUpper = (bmax - ray.origin) * invRayDir;
+	glm::vec4 tMins(glm::min(tLower, tUpper), ray.t);
+	glm::vec4 tMaxes(glm::max(tLower, tUpper), 1000); // supposed to be ray.tmax but we dont calc it...
+	float tBoxMin = glm::compMax(tMins);
+	float tBoxMax = glm::compMin(tMaxes);
+	return tBoxMin <= tBoxMax;
 
-	if (!(tmax >= tmin && tmin < ray.t && tmax > 0))
-	{
-		logger->info("tmax: {} | tmin: {} | ray.t: {}\n{} | {} | {}", tmax, tmin, ray.t, tmax >= tmin, tmin <= ray.t, tmax > 0);
-	}
-	return tmax >= tmin && tmin < ray.t && tmax > 0;
 }
 
 void cpuBVH::intersectPrim(Ray& ray, const Primitive& primitive)

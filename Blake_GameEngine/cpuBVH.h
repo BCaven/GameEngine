@@ -3,6 +3,9 @@
 #include <algorithm>
 #include "Shape.h"
 #include <glm/vec3.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/component_wise.hpp>
+
 
 #define MAX_PRIMS 1000
 
