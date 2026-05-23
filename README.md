@@ -9,7 +9,7 @@ It is also designed to test different rendering techniques with a simple render 
 
 All aspects of the engine are instanced and use factories with simple APIs for developers to use without worrying about memory management or organization.
 
-Core aspects of the engine (e.g., the game loop, render engine, game objects, shaders, etc.) utilize OOP principles to make swapping between different objects and structures (such as switching the scene graph datastructure) is as simple as changing the type in a factory.
+Core aspects of the engine (e.g., the game loop, render engine, game objects, shaders, etc.) utilize OOP inheritance to make swapping between different objects and structures (such as switching the scene graph datastructure) is as simple as changing the type in a factory.
 
 # api considerations
 
