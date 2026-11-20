@@ -26,5 +26,7 @@ public:
 	virtual inline void AddObjectToSceneGraph(std::shared_ptr<GameObject> newObj) { GameObjects.push_back(newObj); }
 	virtual std::vector<std::shared_ptr<GameObject>> GetVisibleObjects();
 	virtual std::vector<std::shared_ptr<GameObject>> GetAllObjects();
+	void setActiveCamera(std::shared_ptr<Camera> activeCam) { activeCamera = activeCam; }
+
 };
 

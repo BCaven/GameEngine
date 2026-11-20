@@ -47,24 +47,17 @@ int main(int argc, char** argv)
 	
 	// instancing :)
 	auto InstancedShader = std::make_shared<Shader>("simple");
-	auto InstancedSuzanne = Shape::fromFile("suzanne.buvf", InstancedShader);
-	auto sceneGraph = std::make_shared<SceneGraphBVH_cpu>();
+	auto InstancedSuzanne = Shape::fromFile("suzanne.bcf", InstancedShader);
+	auto sceneGraph = std::make_shared<SceneGraph>();
+	auto suzanne = std::make_shared<GameObject>(InstancedSuzanne, glm::vec3(0), glm::vec3(1), glm::vec3(0));
+	sceneGraph->AddObjectToSceneGraph(suzanne);
+
 	Engine engine = Engine(sceneGraph);
-	//engine.SpawnObject<GameObject>("beholder.bcf");
-	//auto BillboardRef = engine.SpawnObject<BillboardObject>("cube.buvf");
+	
 	auto CameraObject = engine.SpawnObject<Camera>("Cone.bcf");
-	//engine.SpawnObject<RotatingObject>(InstancedSuzanne, glm::vec3(1, 0, 0), glm::vec3(2, 0, 0));
 
 	sceneGraph->setActiveCamera(CameraObject);
-	//BillboardRef->SetParent(CameraObject);
 
-	Quaternion rot_amount(glm::vec3(0, std::numbers::pi / 4, 0));
-	
-	for (int i = 0; i < 1; i+=1)
-	{
-		engine.SpawnObject<RotatingObject>(InstancedSuzanne, glm::vec3(1, 0, 0), glm::vec3(i, 0, 0));
-	}
-	
 	RenderEngine renderEngine = RenderEngine();
 	renderEngine.initialize(engine.GetSceneGraph());
 	renderEngine.SetRenderCamera(CameraObject);

@@ -77,7 +77,7 @@ void RenderEngine::initialize(std::shared_ptr<SceneGraph> SceneGraph_ptr)
 void RenderEngine::RenderFrame(double Delta)
 {
 	// TODO: update the RenderQueue from the SceneGraph
-	RenderQueue = sceneGraph->GetVisibleObjects();
+	RenderQueue = sceneGraph->GetAllObjects();
 
 	glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -91,6 +91,11 @@ void RenderEngine::RenderFrame(double Delta)
 	ActiveShader.SetInput("mpv", view_projection);
 
 	for (std::shared_ptr<GameObject> gameObj : RenderQueue) {
+		if (!gameObj)
+		{
+			logger->error("Bad pointer to game object!");
+			continue;
+		}
 		auto shape = gameObj->getShape();
 		glBindVertexArray(shape->getVAO());
 		// bind texture if we have it

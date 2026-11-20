@@ -1,3 +1,8 @@
+"""
+Blender .buvf file format export script.
+"""
+
+
 import bpy
 import bmesh
 
