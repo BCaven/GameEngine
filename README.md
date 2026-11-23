@@ -1,6 +1,4 @@
 # ML Game Engine
-> This project was in early development and is no longer being worked on. \
-> Right now I am working on [my path tracer](https://github.com/BCaven/OfflineRaytracingGPU/)
 
 This is a game engine built in C++ with CUDA and LibTorch support
 designed to provide a sandbox for ML-first techniques.
