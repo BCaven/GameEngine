@@ -19,4 +19,10 @@ The engine is also designed to provide a test bed for training and deploying mac
 
 This engine was created from frustration while working with Unreal Engine 5, specifically when implementing computer vision features in virtual production workflows.
 
+# Roadmap:
 
+The plan is to use this engine to test real-time rendering algorithms. \
+On the list so far:
+- [ ] Radiance Cascades
+- [ ] ReSTIR Hardware RT
+- [ ] Neural Rendering
