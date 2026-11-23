@@ -18,6 +18,62 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Blake_GameEngine\include\BillboardObject.h" />
+    <ClInclude Include="Blake_GameEngine\include\Camera.h" />
+    <ClInclude Include="Blake_GameEngine\include\cpuBVH.h" />
+    <ClInclude Include="Blake_GameEngine\include\Debug_Functions.h" />
+    <ClInclude Include="Blake_GameEngine\include\DeferredRenderEngine.h" />
+    <ClInclude Include="Blake_GameEngine\include\Engine.h" />
+    <ClInclude Include="Blake_GameEngine\include\GameObject.h" />
+    <ClInclude Include="Blake_GameEngine\include\Quaternion.h" />
+    <ClInclude Include="Blake_GameEngine\include\RenderEngine.h" />
+    <ClInclude Include="Blake_GameEngine\include\RenderEngineForward.h" />
+    <ClInclude Include="Blake_GameEngine\include\RotatingObject.h" />
+    <ClInclude Include="Blake_GameEngine\include\SceneGraph.h" />
+    <ClInclude Include="Blake_GameEngine\include\SceneGraphBVH_cpu.h" />
+    <ClInclude Include="Blake_GameEngine\include\SDL_Manager.h" />
+    <ClInclude Include="Blake_GameEngine\include\Shader.h" />
+    <ClInclude Include="Blake_GameEngine\include\Shape.h" />
+    <ClInclude Include="Blake_GameEngine\include\Texture.h" />
+    <ClInclude Include="Blake_GameEngine\include\Utility.h" />
+    <ClInclude Include="Blake_GameEngine\include\WorldDefaults.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Blake_GameEngine\src\BillboardObject.cpp" />
+    <ClCompile Include="Blake_GameEngine\src\Camera.cpp" />
+    <ClCompile Include="Blake_GameEngine\src\cpuBVH.cpp" />
+    <ClCompile Include="Blake_GameEngine\src\DeferredRenderEngine.cpp" />
+    <ClCompile Include="Blake_GameEngine\src\Engine.cpp" />
+    <ClCompile Include="Blake_GameEngine\src\GameObject.cpp" />
+    <ClCompile Include="Blake_GameEngine\src\main.cpp" />
+    <ClCompile Include="Blake_GameEngine\src\Quaternion.cpp" />
+    <ClCompile Include="Blake_GameEngine\src\RenderEngine.cpp" />
+    <ClCompile Include="Blake_GameEngine\src\RenderEngineForward.cpp" />
+    <ClCompile Include="Blake_GameEngine\src\RotatingObject.cpp" />
+    <ClCompile Include="Blake_GameEngine\src\SceneGraph.cpp" />
+    <ClCompile Include="Blake_GameEngine\src\SceneGraphBVH_cpu.cpp" />
+    <ClCompile Include="Blake_GameEngine\src\SDL_Manager.cpp" />
+    <ClCompile Include="Blake_GameEngine\src\Shader.cpp" />
+    <ClCompile Include="Blake_GameEngine\src\Shape.cpp" />
+    <ClCompile Include="Blake_GameEngine\src\Texture.cpp" />
+    <ClCompile Include="Blake_GameEngine\src\Utility.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Blake_GameEngine\assets\Cone.bcf" />
+    <None Include="Blake_GameEngine\assets\cube.bcf" />
+    <None Include="Blake_GameEngine\assets\default.bcf" />
+    <None Include="Blake_GameEngine\assets\ExtrudedCode.bcf" />
+    <None Include="Blake_GameEngine\assets\suzanne.bcf" />
+    <None Include="Blake_GameEngine\shaders\deferred.geo.frag" />
+    <None Include="Blake_GameEngine\shaders\deferred.geo.vert" />
+    <None Include="Blake_GameEngine\shaders\deferred.light.comp" />
+    <None Include="Blake_GameEngine\shaders\simple.frag" />
+    <None Include="Blake_GameEngine\shaders\simple.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Blake_GameEngine\assets\default_texture.jpg" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
     <ProjectGuid>{026DC4C3-F904-7D81-B04E-485A411C41BF}</ProjectGuid>
@@ -94,6 +150,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>F:\Projects\GithubProjects\BCaven\GameEngine\Blake_GameEngine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -125,43 +182,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="blake_gameengine\BillboardObject.cpp" />
-    <ClCompile Include="blake_gameengine\Camera.cpp" />
-    <ClCompile Include="blake_gameengine\cpuBVH.cpp" />
-    <ClCompile Include="blake_gameengine\DeferredRenderEngine.cpp" />
-    <ClCompile Include="blake_gameengine\Engine.cpp" />
-    <ClCompile Include="blake_gameengine\GameObject.cpp" />
-    <ClCompile Include="blake_gameengine\main.cpp" />
-    <ClCompile Include="blake_gameengine\Quaternion.cpp" />
-    <ClCompile Include="blake_gameengine\RenderEngine.cpp" />
-    <ClCompile Include="blake_gameengine\RotatingObject.cpp" />
-    <ClCompile Include="blake_gameengine\SceneGraph.cpp" />
-    <ClCompile Include="blake_gameengine\SceneGraphBVH_cpu.cpp" />
-    <ClCompile Include="blake_gameengine\SDL_Manager.cpp" />
-    <ClCompile Include="blake_gameengine\Shader.cpp" />
-    <ClCompile Include="blake_gameengine\Shape.cpp" />
-    <ClCompile Include="blake_gameengine\Utility.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="blake_gameengine\BillboardObject.h" />
-    <ClInclude Include="blake_gameengine\Camera.h" />
-    <ClInclude Include="blake_gameengine\cpuBVH.h" />
-    <ClInclude Include="blake_gameengine\Debug_Functions.h" />
-    <ClInclude Include="blake_gameengine\DeferredRenderEngine.h" />
-    <ClInclude Include="blake_gameengine\Engine.h" />
-    <ClInclude Include="blake_gameengine\GameObject.h" />
-    <ClInclude Include="blake_gameengine\Quaternion.h" />
-    <ClInclude Include="blake_gameengine\RenderEngine.h" />
-    <ClInclude Include="blake_gameengine\RotatingObject.h" />
-    <ClInclude Include="blake_gameengine\SceneGraph.h" />
-    <ClInclude Include="blake_gameengine\SceneGraphBVH_cpu.h" />
-    <ClInclude Include="blake_gameengine\SDL_Manager.h" />
-    <ClInclude Include="blake_gameengine\Shader.h" />
-    <ClInclude Include="blake_gameengine\Shape.h" />
-    <ClInclude Include="blake_gameengine\Utility.h" />
-    <ClInclude Include="blake_gameengine\WorldDefaults.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

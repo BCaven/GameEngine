@@ -16,7 +16,6 @@ Shape::Shape(const size_t vertCount, const std::vector<float>& data)
 {
 	vao = -1;
 	vbo = -1;
-	tex = -1;
 	logger = spdlog::get("shape");
 	if (!logger)
 	{
@@ -43,9 +42,6 @@ Shape::Shape(const size_t vertCount, const std::vector<float>& data)
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*) offset);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
-
-	auto TexFlags = rendering::TextureFlags();
-	loadTextureFromFile("default_texture.jpg", tex, TexFlags);
 
 	if (debugging::checkOpenGLErrors())
 	{
@@ -83,8 +79,7 @@ Shape::~Shape()
 	}
 }
 
-template <typename T>
-std::shared_ptr<Shape> Shape::fromFile(std::string fileName, T shader)
+std::shared_ptr<Shape> Shape::fromFile(std::string fileName)
 {
 	auto logger = spdlog::get("shape-loader");
 	if (!logger)
@@ -118,7 +113,7 @@ std::shared_ptr<Shape> Shape::fromFile(std::string fileName, T shader)
 			floatData.push_back(std::stof(line));
 		}
 	}
-	
+
 	if (floatData.size() == vertCount * 2 * 3)
 	{
 		// fill the rest with dummy UV coordinates (0, 0), (0, 1), (1, 0) over and over
@@ -141,51 +136,22 @@ std::shared_ptr<Shape> Shape::fromFile(std::string fileName, T shader)
 
 	logger->info("Finished reading file, time: {}", Utility::getTimeSeconds() - startTime);
 	startTime = Utility::getTimeSeconds();
-	std::shared_ptr<Shape> constructedShape = std::make_shared<Shape>(vertCount, floatData, shader);
+	std::shared_ptr<Shape> constructedShape = std::make_shared<Shape>(vertCount, floatData);
 	logger->info("Finished constructing shape, time: {}", Utility::getTimeSeconds() - startTime);
 	return constructedShape;
+}
+
+template <typename T>
+std::shared_ptr<Shape> Shape::fromFile(std::string fileName, T shader)
+{
+	auto shape = Shape::fromFile(fileName);
+	//shape.loadShader(shader);
+	return shape;
 }
 template std::shared_ptr<Shape> Shape::fromFile<std::string>(std::string fileName, std::string shader);
 template std::shared_ptr<Shape> Shape::fromFile<const char*>(std::string fileName, const char* shader);
 template std::shared_ptr<Shape> Shape::fromFile<std::shared_ptr<Shader>>(std::string fileName, std::shared_ptr<Shader> shader);
 
-
-
-bool Shape::loadTextureFromFile(std::string filePath, GLuint& texture, rendering::TextureFlags flags)
-{
-	int width, height, channels;
-	unsigned char* data = nullptr;
-	if (!helper::loadImageFile(filePath, width, height, channels, data))
-	{
-		return false;
-	}
-	bool r = loadTexture(data, width, height, channels, texture, flags);
-	helper::freeImage(data);
-	return r;
-}
-
-bool Shape::loadTexture(unsigned char* data, int width, int height, int channels, GLuint& texture, rendering::TextureFlags flags)
-{
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	// parse flags
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, flags.TextureWrapS);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, flags.TextureWrapT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, flags.TextureMinFilter);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, flags.TextureMagFilter);
-
-	if (!data)
-	{
-		logger->warn("Failed to load data when trying to load texture!");
-		return false;
-	}
-	// TODO: support for non-RGB textures
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	return true;
-}
 
 void Shape::getAABB(glm::vec3& min, glm::vec3& max)
 {

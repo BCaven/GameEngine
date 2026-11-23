@@ -19,13 +19,12 @@
 
 class RenderEngine
 {
+protected:
 	int FrameHistory;
 
 	std::shared_ptr<Camera> RenderCamera;
 
 	std::shared_ptr<spdlog::logger> logger;
-
-	Shader ActiveShader;
 
 	// later we will need a scene graph. That time is now :)
 	std::vector<std::shared_ptr<GameObject>> RenderQueue;
@@ -34,18 +33,15 @@ class RenderEngine
 	// buffer that includes information about the screen
 	// ideal: this is the same memory that opengl renders to for deferred rendering pipeline
 	//torch::Tensor screen_buffer;
+	// this might be better to have as a child-class-only member
 
-	// TODO: think about if this is where textures should live
-	bool loadTexture(unsigned char* data, int width, int height, int channels, GLuint& texture, rendering::TextureFlags flags);
-	bool loadTextureFromFile(std::string filePath, GLuint& texture, rendering::TextureFlags flags);
-
+	
 
 public:
-	RenderEngine() : RenderEngine("simple") {};
-	RenderEngine(std::string shaderName);
-	~RenderEngine();
-	virtual void initialize(std::shared_ptr<SceneGraph> SceneGraph_ptr);
-	virtual void RenderFrame(double Delta);
-	inline void SetRenderCamera(std::shared_ptr<Camera> newCam) { RenderCamera = newCam; }
+	virtual ~RenderEngine() = default;
+	virtual void initialize(std::shared_ptr<SceneGraph> SceneGraph_ptr) = 0;
+	virtual void RenderFrame(double Delta) = 0;
+	void SetRenderCamera(std::shared_ptr<Camera> newCam) { RenderCamera = newCam; }
+	virtual void bindTex(std::shared_ptr<Texture> tex) = 0;
 };
 

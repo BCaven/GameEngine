@@ -1,0 +1,28 @@
+#version 430
+layout(local_size_x = 16, local_size_y = 16) in;
+
+layout(rgba8, binding = 0) uniform writeonly image2D outImage;
+
+uniform sampler2D gAlbedo;
+uniform sampler2D gNormal;
+uniform sampler2D gDepth;
+uniform mat4 invViewProj;
+
+void main()
+{
+    ivec2 px = ivec2(gl_GlobalInvocationID.xy);
+    ivec2 size = imageSize(outImage);
+    if (px.x >= size.x || px.y >= size.y) return;   // dispatch is rounded up
+
+    float depth = texelFetch(gDepth, px, 0).r;
+    if (depth >= 1.0) {                              // nothing drawn here
+        imageStore(outImage, px, vec4(0.4, 0.4, 0.4, 1.0));
+        return;
+    }
+
+    vec3 albedo = texelFetch(gAlbedo, px, 0).rgb;
+    vec3 n = normalize(texelFetch(gNormal, px, 0).xyz);
+    float diffuse = 1.f; 
+
+    imageStore(outImage, px, vec4(albedo * diffuse, 1.0));
+}

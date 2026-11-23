@@ -13,7 +13,7 @@
 #include "Debug_Functions.h"
 #include "Utility.h"
 #include "Shader.h"
-
+#include "Texture.h"
 
 /*
 TODO: make shapes instance-able
@@ -31,23 +31,25 @@ private:
 	std::vector<glm::vec2> uv;
 	GLuint vao;
 	GLuint vbo;
-	GLuint tex;
+	std::shared_ptr<Texture> texture = nullptr;
 	std::shared_ptr<spdlog::logger> logger;
 
-	std::shared_ptr<Shader> ActiveShader;
+	// TODO later: support different shaders on each shape in the geo pass
+	// this might be an absolute nightmare and not worth it :)
+	//std::shared_ptr<Shader> ActiveShader;
 
-	bool loadTextureFromFile(std::string filePath, GLuint& texture, rendering::TextureFlags flags);
-	bool loadTexture(unsigned char* data, int width, int height, int channels, GLuint& texture, rendering::TextureFlags flags);
-
-	Shape(const size_t vertCount, const std::vector<float>& data);
 
 public:
 	// need to make this idiot proof
 	template <typename T>
 	static std::shared_ptr<Shape> fromFile(std::string fileName, T shader);
+	static std::shared_ptr<Shape> fromFile(std::string fileName);
 
+	Shape(const size_t vertCount, const std::vector<float>& data);
+
+	/*
 	//Shape(const size_t vertCount, const std::vector<float>& data) : Shape(vertCount, data, "simple") {};
-	Shape(const size_t vertCount, const std::vector<float>& data, std::shared_ptr<Shader> ShaderPtr) : Shape(vertCount, data) 
+	Shape(const size_t vertCount, const std::vector<float>& data, std::shared_ptr<Shader> ShaderPtr) : Shape(vertCount, data)
 	{
 		ActiveShader = ShaderPtr;
 	};
@@ -55,6 +57,7 @@ public:
 	{
 		ActiveShader = std::make_shared<Shader>(ShaderPrefix);
 	};
+	//*/
 
 	~Shape();
 	inline GLuint getVAO() 
@@ -66,14 +69,11 @@ public:
 		return pos.size();
 	}
 
-	inline void bindTex()
+	inline void setTexture(std::shared_ptr<Texture> tex) { texture = tex; }
+
+	inline std::shared_ptr<Texture> getTexture()
 	{
-		if (tex != -1)
-		{
-			ActiveShader->SetInput("bTex", true);
-			glBindTexture(GL_TEXTURE_2D, tex);
-			glBindVertexArray(vao);
-		}
+		return texture;
 	}
 
 	void getAABB(glm::vec3& min, glm::vec3& max);

@@ -1,11 +1,13 @@
 #include "SDL_Manager.h"
 #include "Engine.h"
-#include "RenderEngine.h"
+#include "DeferredRenderEngine.h"
+#include "RenderEngineForward.h"
 #include "GameObject.h"
 #include "RotatingObject.h"
-//#include "SceneGraph.h"
+#include "SceneGraph.h"
 #include "BillboardObject.h"
-#include "SceneGraphBVH_cpu.h"
+#include "Texture.h"
+//#include "SceneGraphBVH_cpu.h"
 
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
@@ -41,26 +43,35 @@ int main(int argc, char** argv)
 	SDL_Manager& sdl = SDL_Manager::sdl();
 
 	sdl.spawnWindow("Test Window 1", 1000, 500, false);
-	//sdl.spawnWindow("Test Window 2", 500, 500, false);
-
+	debugging::initGLDebug();
 	KeyInputs& inputManager = KeyInputs::inputHandler(&sdl);
 	
 	// instancing :)
-	auto InstancedShader = std::make_shared<Shader>("simple");
-	auto InstancedSuzanne = Shape::fromFile("suzanne.bcf", InstancedShader);
-	auto sceneGraph = std::make_shared<SceneGraph>();
-	auto suzanne = std::make_shared<GameObject>(InstancedSuzanne, glm::vec3(0), glm::vec3(1), glm::vec3(0));
-	sceneGraph->AddObjectToSceneGraph(suzanne);
+	logger->info("Loading shader the first time:");
+	auto InstancedTexture = std::make_shared<Texture>();
+	auto PinkTexture = std::make_shared<Texture>("assets/pink.jpg");
 
+	auto InstancedSuzanne = Shape::fromFile("assets/suzanne.buvf");
+	auto InstancedCube = Shape::fromFile("assets/cube.buvf");
+	auto BlenderSuzanne = Shape::fromFile("assets/suzanne.buvf");
+	InstancedCube->setTexture(InstancedTexture);
+	InstancedSuzanne->setTexture(PinkTexture);
+	BlenderSuzanne->setTexture(InstancedTexture);
+	logger->info("Scene graph:");
+	auto sceneGraph = std::make_shared<SceneGraph>();
+
+	logger->info("Engine:");
 	Engine engine = Engine(sceneGraph);
 	
-	auto CameraObject = engine.SpawnObject<Camera>("Cone.bcf");
-
+	auto CameraObject = engine.SpawnObject<Camera>("assets/Cone.bcf");
+	auto SuzanneObject = engine.SpawnObject<GameObject>(InstancedSuzanne, glm::vec3(-1.5, 0, 0), glm::vec3(1), glm::vec3(0));
+	auto CubeObject = engine.SpawnObject<GameObject>(InstancedCube, glm::vec3(1.5, 0, 0), glm::vec3(1), glm::vec3(0));
+	auto SpinningSuzanne = engine.SpawnObject<RotatingObject>(BlenderSuzanne, glm::vec3(1, 0, 0), glm::vec3(0, 2, 0));
 	sceneGraph->setActiveCamera(CameraObject);
 
-	RenderEngine renderEngine = RenderEngine();
-	renderEngine.initialize(engine.GetSceneGraph());
-	renderEngine.SetRenderCamera(CameraObject);
+	auto renderEngine = std::make_shared<DeferredRenderEngine>();
+	renderEngine->initialize(engine.GetSceneGraph());
+	renderEngine->SetRenderCamera(CameraObject);
 
 	engine.initialize();
 
@@ -74,9 +85,9 @@ int main(int argc, char** argv)
 		double Delta = Utility::getTimeSeconds() - prevTime;
 		prevTime = Utility::getTimeSeconds();
 
-		renderEngine.RenderFrame(Delta);
+		renderEngine->RenderFrame(Delta);
 		
-		if (debugging::checkOpenGLErrors())
+		if (debugging::checkOpenGLErrors("Main Render Loop", 90))
 		{
 			KeyInputs::QUIT = true;
 		}

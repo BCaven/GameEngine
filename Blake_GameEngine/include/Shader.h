@@ -10,11 +10,18 @@
 
 #include "Debug_Functions.h"
 
+enum ShaderTypes
+{
+	VERT = 0x01,
+	FRAG = 0x02,
+	COMPUTE = 0x04
+};
 
 class Shader
 {
 	GLuint vert;
 	GLuint frag;
+	GLuint compute;
 	GLuint programID;
 
 	std::shared_ptr<spdlog::logger> logger;
@@ -25,7 +32,7 @@ class Shader
 
 
 	bool loadShader(std::string shaderFile, GLuint shader);
-	void loadShaders(std::string shaderName);
+	void loadShaders(std::string shaderName, unsigned int pipelineComponents);
 
 	// TODO: I think this should be weak_ptrs so they get automatically updated and we only need to assign their references once
 	// TODO: we will also need to have flags if these change per frame and per object
@@ -48,7 +55,7 @@ class Shader
 
 
 public:
-	Shader(std::string filePath);
+	Shader(std::string filePath, unsigned int pipelineComponents = (VERT | FRAG));
 
 	~Shader();
 

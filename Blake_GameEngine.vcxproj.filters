@@ -15,106 +15,155 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="blake_gameengine\BillboardObject.cpp">
+    <ClInclude Include="Blake_GameEngine\include\BillboardObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Blake_GameEngine\include\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Blake_GameEngine\include\cpuBVH.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Blake_GameEngine\include\Debug_Functions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Blake_GameEngine\include\DeferredRenderEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Blake_GameEngine\include\Engine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Blake_GameEngine\include\GameObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Blake_GameEngine\include\Quaternion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Blake_GameEngine\include\RenderEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Blake_GameEngine\include\RotatingObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Blake_GameEngine\include\SceneGraph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Blake_GameEngine\include\SceneGraphBVH_cpu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Blake_GameEngine\include\SDL_Manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Blake_GameEngine\include\Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Blake_GameEngine\include\Shape.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Blake_GameEngine\include\Utility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Blake_GameEngine\include\WorldDefaults.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Blake_GameEngine\include\Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Blake_GameEngine\include\RenderEngineForward.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Blake_GameEngine\src\BillboardObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="blake_gameengine\Camera.cpp">
+    <ClCompile Include="Blake_GameEngine\src\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="blake_gameengine\cpuBVH.cpp">
+    <ClCompile Include="Blake_GameEngine\src\cpuBVH.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="blake_gameengine\DeferredRenderEngine.cpp">
+    <ClCompile Include="Blake_GameEngine\src\DeferredRenderEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="blake_gameengine\Engine.cpp">
+    <ClCompile Include="Blake_GameEngine\src\Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="blake_gameengine\GameObject.cpp">
+    <ClCompile Include="Blake_GameEngine\src\GameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="blake_gameengine\main.cpp">
+    <ClCompile Include="Blake_GameEngine\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="blake_gameengine\Quaternion.cpp">
+    <ClCompile Include="Blake_GameEngine\src\Quaternion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="blake_gameengine\RenderEngine.cpp">
+    <ClCompile Include="Blake_GameEngine\src\RenderEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="blake_gameengine\RotatingObject.cpp">
+    <ClCompile Include="Blake_GameEngine\src\RotatingObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="blake_gameengine\SceneGraph.cpp">
+    <ClCompile Include="Blake_GameEngine\src\SceneGraph.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="blake_gameengine\SceneGraphBVH_cpu.cpp">
+    <ClCompile Include="Blake_GameEngine\src\SceneGraphBVH_cpu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="blake_gameengine\SDL_Manager.cpp">
+    <ClCompile Include="Blake_GameEngine\src\SDL_Manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="blake_gameengine\Shader.cpp">
+    <ClCompile Include="Blake_GameEngine\src\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="blake_gameengine\Shape.cpp">
+    <ClCompile Include="Blake_GameEngine\src\Shape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="blake_gameengine\Utility.cpp">
+    <ClCompile Include="Blake_GameEngine\src\Utility.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Blake_GameEngine\src\Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Blake_GameEngine\src\RenderEngineForward.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="blake_gameengine\BillboardObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="blake_gameengine\Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="blake_gameengine\cpuBVH.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="blake_gameengine\Debug_Functions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="blake_gameengine\DeferredRenderEngine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="blake_gameengine\Engine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="blake_gameengine\GameObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="blake_gameengine\Quaternion.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="blake_gameengine\RenderEngine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="blake_gameengine\RotatingObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="blake_gameengine\SceneGraph.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="blake_gameengine\SceneGraphBVH_cpu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="blake_gameengine\SDL_Manager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="blake_gameengine\Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="blake_gameengine\Shape.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="blake_gameengine\Utility.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="blake_gameengine\WorldDefaults.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <None Include="Blake_GameEngine\assets\Cone.bcf">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Blake_GameEngine\assets\cube.bcf">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Blake_GameEngine\assets\default.bcf">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Blake_GameEngine\assets\ExtrudedCode.bcf">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Blake_GameEngine\assets\suzanne.bcf">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Blake_GameEngine\shaders\simple.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Blake_GameEngine\shaders\simple.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Blake_GameEngine\shaders\deferred.geo.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Blake_GameEngine\shaders\deferred.geo.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Blake_GameEngine\shaders\deferred.light.comp">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Blake_GameEngine\assets\default_texture.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

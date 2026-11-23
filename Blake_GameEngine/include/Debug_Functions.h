@@ -5,23 +5,21 @@
 #include <fstream>
 #include <vector>
 #include <functional>
+#include <glm/glm.hpp>
 #include "Utility.h"
 
 #include <stb_image.h>
 
 namespace debugging
 {
-	inline bool checkOpenGLErrors()
+	inline bool checkOpenGLErrors(const char* where = "", int line = 0)
 	{
-		GLenum err;
-		while ((err = glGetError()) != GL_NO_ERROR)
-		{
-			spdlog::error("OpenGL errors!");
-			spdlog::error("Error code: {}", err);
-			return true;
-		}
-		return false;
+		bool any = false;
+		for (GLenum err; (err = glGetError()) != GL_NO_ERROR; any = true)
+			spdlog::error("GL error 0x{:x} at {}:{}", err, where, line);
+		return any;
 	}
+	#define GL_ERRCHECK() checkOpenGLErrors(__FILE__, __LINE__)
 	
 	
 	template <typename T, typename... Args>
@@ -34,6 +32,73 @@ namespace debugging
 		return retVal;
 	}
 	
+
+	inline static const char* dbgSource(GLenum s) {
+		switch (s) {
+		case GL_DEBUG_SOURCE_API:             return "API";
+		case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   return "WindowSystem";
+		case GL_DEBUG_SOURCE_SHADER_COMPILER: return "ShaderCompiler";
+		case GL_DEBUG_SOURCE_THIRD_PARTY:     return "ThirdParty";
+		case GL_DEBUG_SOURCE_APPLICATION:     return "Application";
+		default:                              return "Other";
+		}
+	}
+	inline static const char* dbgType(GLenum t) {
+		switch (t) {
+		case GL_DEBUG_TYPE_ERROR:               return "Error";
+		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: return "Deprecated";
+		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  return "UndefinedBehavior";
+		case GL_DEBUG_TYPE_PORTABILITY:         return "Portability";
+		case GL_DEBUG_TYPE_PERFORMANCE:         return "Performance";
+		case GL_DEBUG_TYPE_MARKER:              return "Marker";
+		default:                                return "Other";
+		}
+	}
+
+	inline void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
+		GLsizei length, const GLchar* message, const void*)
+	{
+		switch (severity) {
+		case GL_DEBUG_SEVERITY_HIGH:
+			spdlog::error("[GL {}/{} #{}] {}", dbgSource(source), dbgType(type), id,
+				std::string_view(message, length));
+			break;
+		case GL_DEBUG_SEVERITY_MEDIUM:
+			spdlog::warn("[GL {}/{} #{}] {}", dbgSource(source), dbgType(type), id,
+				std::string_view(message, length));
+			break;
+		default:
+			spdlog::info("[GL {}/{} #{}] {}", dbgSource(source), dbgType(type), id,
+				std::string_view(message, length));
+		}
+
+#ifndef NDEBUG
+		if (type == GL_DEBUG_TYPE_ERROR) {
+#ifdef _MSC_VER
+			__debugbreak();            // synchronous output means the stack points at the bad call
+#else
+			std::raise(SIGTRAP);       // needs <csignal>
+#endif
+		}
+#endif
+	}
+
+	inline void initGLDebug()
+	{
+		GLint flags = 0;
+		glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+		if (!(flags & GL_CONTEXT_FLAG_DEBUG_BIT))
+			spdlog::warn("Not a debug context; driver may emit few or no debug messages");
+
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);   // callback fires inside the offending call
+		glDebugMessageCallback(glDebugCallback, nullptr);
+
+		// Drop the noisy "buffer X will use VIDEO memory" style notifications
+		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION,
+			0, nullptr, GL_FALSE);
+	}
+
 }
 namespace helper
 {

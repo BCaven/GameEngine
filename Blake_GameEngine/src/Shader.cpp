@@ -1,13 +1,13 @@
 #include "Shader.h"
 
-Shader::Shader(std::string filePath)
+Shader::Shader(std::string filePath, unsigned int pipelineComponents)
 {
 	logger = spdlog::get("shader");
 	if (!logger)
 	{
 		logger = spdlog::stdout_color_mt("shader");
 	}
-	loadShaders(filePath);
+	loadShaders(filePath, pipelineComponents);
 }
 
 Shader::~Shader()
@@ -40,23 +40,41 @@ bool Shader::loadShader(std::string shaderFile, GLuint shader)
 	return true;
 }
 
-void Shader::loadShaders(std::string shaderName)
+void Shader::loadShaders(std::string shaderName, unsigned int pipelineComponents)
 {
+	programID = glCreateProgram();
+
 	// TODO: better way for searching for shaders
 	// I like the naming convention but we will need to check for geo and tessl shaders later
-	// and I do not want to have a flat directory forever
-	vert = glCreateShader(GL_VERTEX_SHADER);
-	std::string vertShaderFile = shaderName + ".vert";
-	loadShader(vertShaderFile, vert);
+	if (pipelineComponents & ShaderTypes::VERT)
+	{
+		logger->info("Adding vertex shader");
+		vert = glCreateShader(GL_VERTEX_SHADER);
+		std::string vertShaderFile = shaderName + ".vert";
+		loadShader(vertShaderFile, vert);
+		glAttachShader(programID, vert);
+	}
 
-	frag = glCreateShader(GL_FRAGMENT_SHADER);
-	std::string fragShaderFile = shaderName + ".frag";
-	loadShader(fragShaderFile, frag);
+	if (pipelineComponents & ShaderTypes::FRAG)
+	{
+		logger->info("Adding fragment shader");
+		frag = glCreateShader(GL_FRAGMENT_SHADER);
+		std::string fragShaderFile = shaderName + ".frag";
+		loadShader(fragShaderFile, frag);
+		glAttachShader(programID, frag);
 
-	programID = glCreateProgram();
-	logger->info("Attaching above shaders to program: {}", programID);
-	glAttachShader(programID, vert);
-	glAttachShader(programID, frag);
+	}
+
+	if (pipelineComponents & ShaderTypes::COMPUTE)
+	{
+		logger->info("Adding compute shader");
+		compute = glCreateShader(GL_COMPUTE_SHADER);
+		std::string computeShaderFile = shaderName + ".comp";
+		loadShader(computeShaderFile, compute);
+		glAttachShader(programID, compute);
+	}
+
+	logger->info("Linking shaders to program: {}", programID);
 	glLinkProgram(programID);
 
 	int success;
@@ -68,8 +86,18 @@ void Shader::loadShaders(std::string shaderName)
 		logger->error("Shader program linking failed: {}", infoLog);
 		// error macro
 	}
-	glDeleteShader(vert);
-	glDeleteShader(frag);
+	if (pipelineComponents & ShaderTypes::VERT)
+	{
+		glDeleteShader(vert);
+	}
+	if (pipelineComponents & ShaderTypes::FRAG)
+	{
+		glDeleteShader(frag);
+	}
+	if (pipelineComponents & ShaderTypes::COMPUTE)
+	{
+		glDeleteShader(compute);
+	}
 	glUseProgram(0);
 }
 
@@ -154,3 +182,8 @@ void Shader::SetInput<glm::mat4>(std::string name, glm::mat4 value)
 	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
 }
 
+template <>
+void Shader::SetInput<GLuint>(std::string name, GLuint value)
+{
+	
+}
